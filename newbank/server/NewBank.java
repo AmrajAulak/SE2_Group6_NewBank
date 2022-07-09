@@ -6,9 +6,11 @@ public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
+	private HashMap<String,String> passwords;
 	
 	private NewBank() {
 		customers = new HashMap<>();
+		passwords = new HashMap<>();
 		addTestData();
 	}
 	
@@ -16,14 +18,18 @@ public class NewBank {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 1000.0));
 		customers.put("Bhagy", bhagy);
+		passwords.put("Bhagy", "123");
 		
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
 		customers.put("Christina", christina);
-		
+		passwords.put("Christina", "456");
+
 		Customer john = new Customer();
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);
+		passwords.put("John", "789");
+
 	}
 	
 	public static NewBank getBank() {
@@ -31,8 +37,11 @@ public class NewBank {
 	}
 	
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
+		//bank.addTestData();
 		if(customers.containsKey(userName)) {
-			return new CustomerID(userName);
+			if(passwords.get(userName).equals(password)) {
+				return new CustomerID(userName);
+			}
 		}
 		return null;
 	}
