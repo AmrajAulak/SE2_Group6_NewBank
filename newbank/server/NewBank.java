@@ -31,13 +31,26 @@ public class NewBank {
 		passwords.put("John", "789");
 
 	}
+
+	public String registerNewCustomer(String userName, String password) {
+
+		if (password.length() < 4){
+			return "passwordError";
+		} else if (customers.containsKey(userName)){
+			return "userNameError";
+		} else {
+			customers.put(userName, new Customer());
+			passwords.put(userName, password);
+			return "registered";
+		}
+	}
 	
 	public static NewBank getBank() {
 		return bank;
 	}
 	
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		//bank.addTestData();
+
 		if(customers.containsKey(userName)) {
 			if(passwords.get(userName).equals(password)) {
 				return new CustomerID(userName);

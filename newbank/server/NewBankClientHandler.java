@@ -21,41 +21,58 @@ public class NewBankClientHandler extends Thread{
 	
 	public void run() {
 		// keep getting requests from the client and processing them
-		try {
-			// ask for user name
-			out.println("Enter Username");
-			String userName = in.readLine();
-			// ask for password
-			out.println("Enter Password");
-			String password = in.readLine();
-			out.println("Checking Details...");
-			// authenticate user and get customer ID token from bank for use in subsequent requests
-			CustomerID customer = bank.checkLogInDetails(userName, password);
-			// if the user is authenticated then get requests from the user and process them 
-			if(customer != null) {
-				out.println("Log In Successful. What do you want to do?");
-				while(true) {
-					String request = in.readLine();
-					System.out.println("Request from " + customer.getKey());
-					String responce = bank.processRequest(customer, request);
-					out.println(responce);
-				}
-			}
-			else {
-				out.println("Log In Failed");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		finally {
 			try {
-				in.close();
-				out.close();
+				while (true) {
+					out.println("Enter 'login' or 'register' ");
+					String userChoice = in.readLine();
+					// ask for user name
+					out.println("Enter Username");
+					String userName = in.readLine();
+					// ask for password
+					out.println("Enter Password");
+					String password = in.readLine();
+					out.println("Checking Details...");
+					// authenticate user and get customer ID token from bank for use in subsequent requests
+					CustomerID customer = bank.checkLogInDetails(userName, password);
+					// if the user is authenticated then get requests from the user and process them
+					switch (userChoice) {
+						case "register":
+							String str = bank.registerNewCustomer(userName, password);
+							if (str.equals("passwordError")) {
+								out.println("Error: your password needs to be at least 4 characters long");
+								break;
+							} else if (str.equals("userNameError")) {
+								out.println("Error: username is already in use");
+								break;
+							} else {
+								out.println("Registration Successful. Please login to continue");
+								break;
+							}
+						case "login":
+							if (customer != null) {
+								out.println("Log In Successful. What do you want to do?");
+								while (true) {
+									String request = in.readLine();
+									System.out.println("Request from " + customer.getKey());
+									String response = bank.processRequest(customer, request);
+									out.println(response);
+								}
+							} else {
+								out.println("Log In Failed");
+							}
+					}
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
-				Thread.currentThread().interrupt();
+			} finally {
+				try {
+					in.close();
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+					Thread.currentThread().interrupt();
+				}
 			}
-		}
 	}
 
 }
