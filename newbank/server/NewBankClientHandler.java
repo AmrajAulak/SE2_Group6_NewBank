@@ -56,6 +56,23 @@ public class NewBankClientHandler extends Thread{
 									System.out.println("Request from " + customer.getKey());
 									String response = bank.processRequest(customer, request);
 									out.println(response);
+
+									switch(request) {
+										case "ADDACCOUNT" : {
+											String accountType = "";
+											String depositAmount = "";
+											out.println("Please choose account type from: MAIN, SAVINGS, or CHECKING");
+											// reads account type response
+											accountType = in.readLine();
+											out.println("Please choose deposit amount");
+											// reads deposit amount response
+											depositAmount = in.readLine();
+											// adds account
+											response = bank.addAccount(customer, accountType, depositAmount);
+											out.println(response);
+										}
+									}
+
 								}
 							} else {
 								out.println("Log In Failed");
