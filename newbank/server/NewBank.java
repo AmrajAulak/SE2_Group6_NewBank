@@ -59,6 +59,7 @@ public class NewBank {
 		return null;
 	}
 
+
 	// commands from the NewBank customer are processed in this method
 	public synchronized String processRequest(CustomerID customer, String request) {
 		if(customers.containsKey(customer.getKey())) {
@@ -72,7 +73,15 @@ public class NewBank {
 	
 	private String showMyAccounts(CustomerID customer) {
 		return (customers.get(customer.getKey())).accountsToString();
-
 	}
+
+	// method to add account - gets current customer and adds account based off input
+	public String addAccount(CustomerID customer, String accountType, String depositAmount) {
+		Customer currentCustomer = customers.get(customer.getKey());
+		currentCustomer.addAccount(new Account(accountType, Integer.parseInt(depositAmount)));
+		return currentCustomer.accountsToString();
+	}
+
+
 
 }
