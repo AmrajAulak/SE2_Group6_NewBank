@@ -71,9 +71,14 @@ public class NewBank {
 //		}
 //		return "FAIL";
 //	}
-	
+
+	// checks whether customer has any accounts and returns them as a string
 	public String showMyAccounts(CustomerID customer) {
-		return (customers.get(customer.getKey())).accountsToString();
+		if (customers.get(customer.getKey()).accountsToString().isEmpty()) {
+			return "No accounts listed";
+		} else {
+			return (customers.get(customer.getKey())).accountsToString();
+		}
 	}
 
 	// method to add account - gets current customer and adds account based off input
