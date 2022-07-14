@@ -54,10 +54,14 @@ public class NewBankClientHandler extends Thread{
 								while (true) {
 									String request = in.readLine();
 									System.out.println("Request from " + customer.getKey());
-									String response = bank.processRequest(customer, request);
-									out.println(response);
+									String response;
 
 									switch(request) {
+										case "SHOWMYACCOUNTS" : {
+											// prints customers accounts
+											out.println(bank.showMyAccounts(customer));
+											break;
+										}
 										case "ADDACCOUNT" : {
 											String accountType = "";
 											String depositAmount = "";
@@ -70,8 +74,12 @@ public class NewBankClientHandler extends Thread{
 											// adds account
 											response = bank.addAccount(customer, accountType, depositAmount);
 											out.println(response);
+											break;
 										}
 									}
+
+									// Allows customer to type in another request
+									out.println("What would you like to do next?");
 
 								}
 							} else {

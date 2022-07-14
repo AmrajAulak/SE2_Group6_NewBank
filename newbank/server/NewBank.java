@@ -61,18 +61,24 @@ public class NewBank {
 
 
 	// commands from the NewBank customer are processed in this method
-	public synchronized String processRequest(CustomerID customer, String request) {
-		if(customers.containsKey(customer.getKey())) {
-			switch(request) {
-			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
-			default : return "FAIL";
-			}
+	// commented out for the time being as not using
+//	public synchronized String processRequest(CustomerID customer, String request) {
+//		if(customers.containsKey(customer.getKey())) {
+//			switch(request) {
+//			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
+//			default : return "FAIL";
+//			}
+//		}
+//		return "FAIL";
+//	}
+
+	// checks whether customer has any accounts and returns them as a string
+	public String showMyAccounts(CustomerID customer) {
+		if (customers.get(customer.getKey()).accountsToString().isEmpty()) {
+			return "No accounts listed";
+		} else {
+			return (customers.get(customer.getKey())).accountsToString();
 		}
-		return "FAIL";
-	}
-	
-	private String showMyAccounts(CustomerID customer) {
-		return (customers.get(customer.getKey())).accountsToString();
 	}
 
 	// method to add account - gets current customer and adds account based off input
