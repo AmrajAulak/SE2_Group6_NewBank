@@ -4,11 +4,13 @@ import java.util.Random;
 public class Account {
 	
 	private String accountName;
+
 	private double balance;
 	private long accountNumber;
 
 	public Account(String accountName, double openingBalance) {
 		this.accountName = accountName;
+
 		this.balance = openingBalance;
 		Random rand = new Random();
 		this.accountNumber = Math.round(rand.nextFloat()*1e6);
@@ -33,6 +35,7 @@ public class Account {
 
 	public void addBalance (double amount){
 		balance = balance + amount;
+		return (accountNumber + " " + accountName + ": " + openingBalance + "\n");
 	}
 
 }
