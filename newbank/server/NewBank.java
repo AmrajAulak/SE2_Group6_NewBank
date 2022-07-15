@@ -84,7 +84,7 @@ public class NewBank {
 	// method to add account - gets current customer and adds account based off input
 	public String addAccount(CustomerID customer, String accountType, String depositAmount) {
 		Customer currentCustomer = customers.get(customer.getKey());
-		currentCustomer.addAccount(new Account(accountType, Integer.parseInt(depositAmount)));
+		currentCustomer.addAccount(new Account(accountType, Double.parseDouble(depositAmount)));
 		return currentCustomer.accountsToString();
 	}
 

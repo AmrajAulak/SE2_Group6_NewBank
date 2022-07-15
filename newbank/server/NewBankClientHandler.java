@@ -63,18 +63,27 @@ public class NewBankClientHandler extends Thread{
 											break;
 										}
 										case "ADDACCOUNT" : {
-											String accountType = "";
-											String depositAmount = "";
-											out.println("Please choose account type from: MAIN, SAVINGS, or CHECKING");
-											// reads account type response
-											accountType = in.readLine();
-											out.println("Please choose deposit amount");
-											// reads deposit amount response
-											depositAmount = in.readLine();
-											// adds account
-											response = bank.addAccount(customer, accountType, depositAmount);
-											out.println(response);
-											break;
+											// while loop so that customer can try again on incorrect formatting
+											while (true) {
+												String accountType;
+												String depositAmount;
+												out.println("Please choose account type from: MAIN, SAVINGS, or CHECKING");
+												// reads account type response
+												accountType = in.readLine();
+												out.println("Please choose deposit amount");
+												// reads deposit amount response
+												depositAmount = in.readLine();
+
+												// checks that the input can be parsed to a double otherwise prompts customer to try again
+												try {
+													Double.parseDouble(depositAmount);
+													response = bank.addAccount(customer, accountType, depositAmount);
+													out.println(response);
+													break;
+												} catch (NumberFormatException e) {
+													out.println("Incorrect formatting: Please try again");
+												}
+											}
 										}
 									}
 
