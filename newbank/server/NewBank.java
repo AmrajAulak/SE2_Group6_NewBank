@@ -73,7 +73,7 @@ public class NewBank {
 //	}
 
 	// checks whether customer has any accounts and returns them as a string
-	;public String showMyAccounts(CustomerID customer) {
+	public String showMyAccounts(CustomerID customer) {
 		if (customers.get(customer.getKey()).accountsToString().isEmpty()) {
 			return "No accounts listed";
 		} else {

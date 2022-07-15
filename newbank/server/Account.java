@@ -35,7 +35,6 @@ public class Account {
 
 	public void addBalance (double amount){
 		balance = balance + amount;
-		return (accountNumber + " " + accountName + ": " + openingBalance + "\n");
 	}
 
 }
