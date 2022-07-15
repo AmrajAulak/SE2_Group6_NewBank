@@ -73,7 +73,7 @@ public class NewBank {
 //	}
 
 	// checks whether customer has any accounts and returns them as a string
-	public String showMyAccounts(CustomerID customer) {
+	;public String showMyAccounts(CustomerID customer) {
 		if (customers.get(customer.getKey()).accountsToString().isEmpty()) {
 			return "No accounts listed";
 		} else {
@@ -88,6 +88,12 @@ public class NewBank {
 		return currentCustomer.accountsToString();
 	}
 
-
-
+	public String move(CustomerID customer,String accountFrom, String accountTo, String amount){
+		Customer currentCustomer = customers.get(customer.getKey());
+		if (currentCustomer.moveFunds(accountFrom, accountTo, Double.parseDouble(amount))) {
+			return "SUCCESS";
+		} else {
+			return "FAIL";
+		}
+	}
 }
