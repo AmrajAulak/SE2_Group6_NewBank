@@ -88,6 +88,12 @@ public class NewBank {
 		return currentCustomer.accountsToString();
 	}
 
-
-
+	public String move(CustomerID customer,String accountFrom, String accountTo, String amount){
+		Customer currentCustomer = customers.get(customer.getKey());
+		if (currentCustomer.moveFunds(accountFrom, accountTo, Double.parseDouble(amount))) {
+			return "SUCCESS";
+		} else {
+			return "FAIL";
+		}
+	}
 }
