@@ -85,6 +85,20 @@ public class NewBankClientHandler extends Thread{
 												}
 											}
 										}
+										case "MOVE":{
+											String accountFrom = "";
+											String accountTo = "";
+											String amount;
+											out.println("Please choose account to withdraw funds");
+											accountFrom= in.readLine();
+											out.println("Please choose account to deposit funds");
+											accountTo= in.readLine();
+											out.println("Please enter the amount to transfer");
+											amount= in.readLine();
+											response = bank.move(customer, accountFrom, accountTo, amount);
+											out.println(response);
+											break;
+										}
 									}
 
 									// Allows customer to type in another request
