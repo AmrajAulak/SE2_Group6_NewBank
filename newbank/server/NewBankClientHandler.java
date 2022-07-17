@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class NewBankClientHandler extends Thread{
 	
@@ -51,6 +52,10 @@ public class NewBankClientHandler extends Thread{
 						case "login":
 							if (customer != null) {
 								out.println("Log In Successful. What do you want to do?");
+								for(String element: bank.showMenu()){
+									out.println(element);
+								}
+
 								while (true) {
 									String request = in.readLine();
 									System.out.println("Request from " + customer.getKey());
@@ -86,7 +91,7 @@ public class NewBankClientHandler extends Thread{
 											}
 											break;
 										}
-										case "MOVE":{
+										case "MOVEFUNDS":{
 											String accountFrom = "";
 											String accountTo = "";
 											String amount;
@@ -104,6 +109,9 @@ public class NewBankClientHandler extends Thread{
 
 									// Allows customer to type in another request
 									out.println("What would you like to do next?");
+									for(String element: bank.showMenu()){
+										out.println(element);
+									}
 
 								}
 							} else {

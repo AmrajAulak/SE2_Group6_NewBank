@@ -1,12 +1,15 @@
 package newbank.server;
 
-import java.util.HashMap;
+import java.lang.reflect.Array;
+import java.util.*;
+
 
 public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
 	private HashMap<String,String> passwords;
+    private List<String> menuList = new ArrayList<>();
 	
 	private NewBank() {
 		customers = new HashMap<>();
@@ -73,6 +76,18 @@ public class NewBank {
 //	}
 
 	// checks whether customer has any accounts and returns them as a string
+
+    public List<String> showMenu(){
+        Collections.addAll(menuList,
+                "SHOWMYACCOUNTS",
+                "MAKEAPAYMENT",
+                "ADDACCOUNT",
+                "MOVEFUNDS",
+                "LOGOUT"
+                );
+        return menuList;
+    }
+
 	public String showMyAccounts(CustomerID customer) {
 		if (customers.get(customer.getKey()).accountsToString().isEmpty()) {
 			return "No accounts listed";
