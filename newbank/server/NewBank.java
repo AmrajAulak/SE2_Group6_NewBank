@@ -34,7 +34,7 @@ public class NewBank {
 
 	public String registerNewCustomer(String userName, String password) {
 
-		if (password.length() < 4){
+		if (password.length() < 4){ // Requirements document says passwords shall be at least 8 characters long
 			return "passwordError";
 		} else if (customers.containsKey(userName)){
 			return "userNameError";

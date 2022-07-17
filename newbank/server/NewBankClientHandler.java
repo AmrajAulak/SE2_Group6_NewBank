@@ -25,6 +25,8 @@ public class NewBankClientHandler extends Thread{
 				while (true) {
 					out.println("Enter 'login' or 'register' ");
 					String userChoice = in.readLine();
+					// Currently the above accepts any input and takes to username request. Should only accept login or register
+
 					// ask for user name
 					out.println("Enter Username");
 					String userName = in.readLine();
@@ -50,7 +52,7 @@ public class NewBankClientHandler extends Thread{
 							}
 						case "login":
 							if (customer != null) {
-								out.println("Log In Successful. What do you want to do?");
+								out.println("Log In Successful. What do you want to do? \n Available commands: SHOWMYACCOUNTS, ADDACCOUNT, MOVE");
 								while (true) {
 									String request = in.readLine();
 									System.out.println("Request from " + customer.getKey());
@@ -68,6 +70,7 @@ public class NewBankClientHandler extends Thread{
 												String accountType;
 												String depositAmount;
 												out.println("Please choose account type from: MAIN, SAVINGS, or CHECKING");
+												// add BACK command
 												// reads account type response
 												accountType = in.readLine();
 												out.println("Please choose deposit amount");
@@ -90,9 +93,12 @@ public class NewBankClientHandler extends Thread{
 											String accountTo = "";
 											String amount;
 											out.println("Please choose account to withdraw funds");
+											// Add a BACK command
 											accountFrom= in.readLine();
 											out.println("Please choose account to deposit funds");
+											// Add a return to menu command
 											accountTo= in.readLine();
+											//Add a return to menu command
 											out.println("Please enter the amount to transfer");
 											amount= in.readLine();
 											response = bank.move(customer, accountFrom, accountTo, amount);
@@ -102,7 +108,7 @@ public class NewBankClientHandler extends Thread{
 									}
 
 									// Allows customer to type in another request
-									out.println("What would you like to do next?");
+									out.println("What would you like to do next? \n Available commands: SHOWMYACCOUNTS, ADDACCOUNT, MOVE");
 
 								}
 							} else {

@@ -26,6 +26,7 @@ public class Customer {
 	public Boolean moveFunds(String accountFrom, String accountTo, double amount){
 		boolean debitAccount = false;
 		boolean creditAccount = false;
+		// GOOD PRACTICE TO HAVE ALL BOOLEAN VARIABLES BEGINNING WITH: CAN, IS, HAS, OR SHOULD.
 
 		for(Account a : accounts) {
 			if (a.getAccountName().equals(accountFrom)){
