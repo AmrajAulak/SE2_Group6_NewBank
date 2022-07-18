@@ -113,7 +113,7 @@ public class NewBank {
 		}
 	}
 
-	public String send(CustomerID senderID, String receiverName, String accountFrom, String amount){
+	public String send(CustomerID senderID, String receiverName, String amount){
 
 		Customer receiverCustomer = customers.get(receiverName);
 		Customer senderCustomer = customers.get(senderID.getKey());
@@ -125,13 +125,13 @@ public class NewBank {
 
 		if (senderAccount.deductBalance(value)) {
 			if (receiverAccount.addBalance(value)) {
-				return "Success";
+				return "Success! "+amount+" sent to "+receiverName;
 			} else {
-				return "Failure";
+				return "Failure - Unable to transmit funds";
 			}
 		}
 		else {
-			return "Failure";
+			return "Failure - Unable to withdraw funds";
 			}
 	}
 }

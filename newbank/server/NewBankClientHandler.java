@@ -106,16 +106,13 @@ public class NewBankClientHandler extends Thread{
 											break;
 										}
 										case "SENDFUNDS":{
-											String accountFrom = "";
 											String customerTo = "";
 											String amount;
-											out.println("Please choose the customer to send funds to:");
+											out.println("Please choose the customer Name to send funds to from your Main Account:");
 											customerTo= in.readLine();
 											out.println("Please enter the amount to transfer");
 											amount= in.readLine();
-											out.println("Please choose account to withdraw funds");
-											accountFrom= in.readLine();
-											response = bank.send(customer, customerTo, amount, accountFrom);
+											response = bank.send(customer, customerTo, amount);
 											out.println(response);
 											break;
 										}
