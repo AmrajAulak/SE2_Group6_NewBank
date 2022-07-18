@@ -15,6 +15,7 @@ public class NewBank {
 		customers = new HashMap<>();
 		passwords = new HashMap<>();
 		addTestData();
+		ArrayList <Transaction> bankLedger = new ArrayList<Transaction>();
 	}
 	
 	private void addTestData() {
