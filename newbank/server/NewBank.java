@@ -1,17 +1,20 @@
 package newbank.server;
 
-import java.util.HashMap;
+import java.util.*;
+
 
 public class NewBank {
 	
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
 	private HashMap<String,String> passwords;
+    private List<String> menuList = new ArrayList<>();
 	
 	private NewBank() {
 		customers = new HashMap<>();
 		passwords = new HashMap<>();
 		addTestData();
+		ArrayList <Transaction> bankLedger = new ArrayList<Transaction>();
 	}
 	
 	private void addTestData() {
@@ -73,6 +76,21 @@ public class NewBank {
 //	}
 
 	// checks whether customer has any accounts and returns them as a string
+
+	// hello there
+
+    public List<String> showMenu(){
+        Collections.addAll(menuList,
+                "SHOWMYACCOUNTS",
+                "MAKEAPAYMENT",
+                "ADDACCOUNT",
+                "MOVEFUNDS",
+				"SENDFUNDS",
+                "LOGOUT"
+                );
+        return menuList;
+    }
+
 	public String showMyAccounts(CustomerID customer) {
 		if (customers.get(customer.getKey()).accountsToString().isEmpty()) {
 			return "No accounts listed";
@@ -88,6 +106,34 @@ public class NewBank {
 		return currentCustomer.accountsToString();
 	}
 
+	public String move(CustomerID customer,String accountFrom, String accountTo, String amount){
+		Customer currentCustomer = customers.get(customer.getKey());
+		if (currentCustomer.moveFunds(accountFrom, accountTo, Double.parseDouble(amount))) {
+			return "SUCCESS";
+		} else {
+			return "FAIL";
+		}
+	}
 
+	public String send(CustomerID senderID, String receiverName, String amount){
 
+		Customer receiverCustomer = customers.get(receiverName);
+		Customer senderCustomer = customers.get(senderID.getKey());
+
+		Account receiverAccount= receiverCustomer.getAccounts().get(0);
+		Account senderAccount= senderCustomer.getAccounts().get(0);
+
+		double value=Double.parseDouble(amount);
+
+		if (senderAccount.deductBalance(value)) {
+			if (receiverAccount.addBalance(value)) {
+				return "Success! "+amount+" sent to "+receiverName;
+			} else {
+				return "Failure - Unable to transmit funds";
+			}
+		}
+		else {
+			return "Failure - Unable to withdraw funds";
+			}
+	}
 }

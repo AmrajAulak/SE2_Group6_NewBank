@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class NewBankClientHandler extends Thread{
 	
@@ -51,6 +52,10 @@ public class NewBankClientHandler extends Thread{
 						case "login":
 							if (customer != null) {
 								out.println("Log In Successful. What do you want to do?");
+								for(String element: bank.showMenu()){
+									out.println(element);
+								}
+
 								while (true) {
 									String request = in.readLine();
 									System.out.println("Request from " + customer.getKey());
@@ -84,11 +89,40 @@ public class NewBankClientHandler extends Thread{
 													out.println("Incorrect formatting: Please try again");
 												}
 											}
+											break;
+										}
+										case "MOVEFUNDS":{
+											String accountFrom = "";
+											String accountTo = "";
+											String amount;
+											out.println("Please choose account to withdraw funds");
+											accountFrom= in.readLine();
+											out.println("Please choose account to deposit funds");
+											accountTo= in.readLine();
+											out.println("Please enter the amount to transfer");
+											amount= in.readLine();
+											response = bank.move(customer, accountFrom, accountTo, amount);
+											out.println(response);
+											break;
+										}
+										case "SENDFUNDS":{
+											String customerTo = "";
+											String amount;
+											out.println("Please choose the customer Name to send funds to from your Main Account:");
+											customerTo= in.readLine();
+											out.println("Please enter the amount to transfer");
+											amount= in.readLine();
+											response = bank.send(customer, customerTo, amount);
+											out.println(response);
+											break;
 										}
 									}
 
 									// Allows customer to type in another request
 									out.println("What would you like to do next?");
+									for(String element: bank.showMenu()){
+										out.println(element);
+									}
 
 								}
 							} else {

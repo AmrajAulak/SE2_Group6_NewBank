@@ -21,4 +21,31 @@ public class Customer {
 	public void addAccount(Account account) {
 		accounts.add(account);		
 	}
+
+	public ArrayList<Account> getAccounts() {
+		return accounts;
+	}
+
+	public boolean moveFunds(String accountFrom, String accountTo, double amount){
+		boolean debitAccount = false;
+		boolean creditAccount = false;
+
+		for(Account a : accounts) {
+			if (a.getAccountName().equals(accountFrom)){
+				debitAccount = true;
+				if (!a.deductBalance(amount)){
+					return false;
+				}
+			}
+			if (a.getAccountName().equals(accountTo)){
+				creditAccount = true;
+				a.addBalance(amount);
+			}
+		}
+
+		if (debitAccount && creditAccount) {
+			return true;
+		}
+		return false;
+	}
 }
