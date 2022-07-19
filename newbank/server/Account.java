@@ -33,8 +33,9 @@ public class Account {
 		}
 	}
 
-	public void addBalance (double amount){
+	public Boolean addBalance (double amount){
 		balance = balance + amount;
+		return true;
 	}
 
 }

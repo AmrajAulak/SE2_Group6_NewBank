@@ -1,6 +1,5 @@
 package newbank.server;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -15,6 +14,7 @@ public class NewBank {
 		customers = new HashMap<>();
 		passwords = new HashMap<>();
 		addTestData();
+		ArrayList <Transaction> bankLedger = new ArrayList<Transaction>();
 	}
 	
 	private void addTestData() {
@@ -85,6 +85,7 @@ public class NewBank {
                 "MAKEAPAYMENT",
                 "ADDACCOUNT",
                 "MOVEFUNDS",
+				"SENDFUNDS",
                 "LOGOUT"
                 );
         return menuList;
@@ -112,5 +113,27 @@ public class NewBank {
 		} else {
 			return "FAIL";
 		}
+	}
+
+	public String send(CustomerID senderID, String receiverName, String amount){
+
+		Customer receiverCustomer = customers.get(receiverName);
+		Customer senderCustomer = customers.get(senderID.getKey());
+
+		Account receiverAccount= receiverCustomer.getAccounts().get(0);
+		Account senderAccount= senderCustomer.getAccounts().get(0);
+
+		double value=Double.parseDouble(amount);
+
+		if (senderAccount.deductBalance(value)) {
+			if (receiverAccount.addBalance(value)) {
+				return "Success! "+amount+" sent to "+receiverName;
+			} else {
+				return "Failure - Unable to transmit funds";
+			}
+		}
+		else {
+			return "Failure - Unable to withdraw funds";
+			}
 	}
 }
