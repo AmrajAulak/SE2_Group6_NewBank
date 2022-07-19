@@ -81,7 +81,7 @@ public class NewBank {
     public List<String> showMenu(){
         Collections.addAll(menuList,
                 "SHOWMYACCOUNTS",
-                "MAKEAPAYMENT",
+                "MAKEAPAYMENT", //What is this for? Is it not covered in Send Funds?
                 "ADDACCOUNT",
                 "MOVEFUNDS",
 				"SENDFUNDS",
@@ -103,12 +103,23 @@ public class NewBank {
 	public String addAccount(CustomerID customer, String accountType, String depositAmount) {
 		Customer currentCustomer = customers.get(customer.getKey());
 		currentCustomer.addAccount(new Account(accountType, Double.parseDouble(depositAmount)));
+
+		Transaction transaction = new Transaction(Double.parseDouble(depositAmount), customer, "DEPOSIT", accountType );
+		bankLedger.add(transaction);
+
 		return currentCustomer.accountsToString();
 	}
 
 	public String move(CustomerID customer,String accountFrom, String accountTo, String amount){
 		Customer currentCustomer = customers.get(customer.getKey());
 		if (currentCustomer.moveFunds(accountFrom, accountTo, Double.parseDouble(amount))) {
+
+			Transaction receiveTransaction = new Transaction(Double.parseDouble(amount), customer, "MOVE", accountTo );
+			Transaction sendTransaction = new Transaction(Double.parseDouble(amount), customer, "MOVE", accountFrom );
+
+			bankLedger.add(receiveTransaction);
+			bankLedger.add(sendTransaction);
+
 			return "SUCCESS";
 		} else {
 			return "FAIL";
@@ -127,6 +138,13 @@ public class NewBank {
 
 		if (senderAccount.deductBalance(value)) {
 			if (receiverAccount.addBalance(value)) {
+
+				Transaction receiveTransaction = new Transaction(Double.parseDouble(amount),senderID,"Receive from"+senderID.getKey(),receiverCustomer.getAccounts().get(0).getAccountName());
+				Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount),senderID,"Send to"+receiverName,senderCustomer.getAccounts().get(0).getAccountName() );
+
+				bankLedger.add(receiveTransaction);
+				bankLedger.add(sendTransaction);
+
 				return "Success! "+amount+" sent to "+receiverName;
 			} else {
 				return "Failure - Unable to transmit funds";

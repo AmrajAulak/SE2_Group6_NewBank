@@ -8,11 +8,12 @@ public class Transaction {
 
     private String createdDate;
     private String transactionID;
-    private long amount;
+    private double amount;
     private CustomerID CustomerID;
     private String transactionType;
+    private String account;
 
-    public Transaction(long amount, CustomerID customer, String type){
+    public Transaction(double amount, CustomerID customerID, String type, String account){
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
@@ -22,8 +23,9 @@ public class Transaction {
         this.transactionID = "TXN"+Math.round(rand.nextFloat()*1e6);
 
         this.amount = amount;
-        this.CustomerID=customer;
+        this.CustomerID=customerID;
         this.transactionType=type;
+        this.account=account;
     }
 
     public CustomerID getCustomer() {
