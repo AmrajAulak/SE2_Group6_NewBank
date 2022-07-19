@@ -115,7 +115,7 @@ public class NewBank {
 		if (currentCustomer.moveFunds(accountFrom, accountTo, Double.parseDouble(amount))) {
 
 			Transaction receiveTransaction = new Transaction(Double.parseDouble(amount), customer, "MOVE", accountTo );
-			Transaction sendTransaction = new Transaction(Double.parseDouble(amount), customer, "MOVE", accountFrom );
+			Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount), customer, "MOVE", accountFrom );
 
 			bankLedger.add(receiveTransaction);
 			bankLedger.add(sendTransaction);
@@ -139,8 +139,8 @@ public class NewBank {
 		if (senderAccount.deductBalance(value)) {
 			if (receiverAccount.addBalance(value)) {
 
-				Transaction receiveTransaction = new Transaction(Double.parseDouble(amount),senderID,"Receive from"+senderID.getKey(),receiverCustomer.getAccounts().get(0).getAccountName());
-				Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount),senderID,"Send to"+receiverName,senderCustomer.getAccounts().get(0).getAccountName() );
+				Transaction receiveTransaction = new Transaction(Double.parseDouble(amount),senderID,"RECEIVE FROM "+senderID.getKey(),receiverCustomer.getAccounts().get(0).getAccountName());
+				Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount),senderID,"SEND TO "+receiverName,senderCustomer.getAccounts().get(0).getAccountName() );
 
 				bankLedger.add(receiveTransaction);
 				bankLedger.add(sendTransaction);
