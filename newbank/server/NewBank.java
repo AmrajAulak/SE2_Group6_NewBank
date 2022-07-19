@@ -10,11 +10,19 @@ public class NewBank {
 	private HashMap<String,Customer> customers;
 	private HashMap<String,String> passwords;
     private List<String> menuList = new ArrayList<>();
+
 	
 	private NewBank() {
 		customers = new HashMap<>();
 		passwords = new HashMap<>();
 		addTestData();
+		Collections.addAll(menuList,
+				"SHOWMYACCOUNTS",
+				"MAKEAPAYMENT",
+				"ADDACCOUNT",
+				"MOVEFUNDS",
+				"LOGOUT"
+		);
 	}
 	
 	private void addTestData() {
@@ -80,13 +88,6 @@ public class NewBank {
 	// hello there
 
     public List<String> showMenu(){
-        Collections.addAll(menuList,
-                "SHOWMYACCOUNTS",
-                "MAKEAPAYMENT",
-                "ADDACCOUNT",
-                "MOVEFUNDS",
-                "LOGOUT"
-                );
         return menuList;
     }
 
