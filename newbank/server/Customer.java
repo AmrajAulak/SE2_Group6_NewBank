@@ -24,24 +24,23 @@ public class Customer {
 
 
 	public Boolean moveFunds(String accountFrom, String accountTo, double amount){
-		boolean debitAccount = false;
-		boolean creditAccount = false;
-		// GOOD PRACTICE TO HAVE ALL BOOLEAN VARIABLES BEGINNING WITH: CAN, IS, HAS, OR SHOULD.
+		boolean canDebitAccount = false;
+		boolean canCreditAccount = false;
 
 		for(Account a : accounts) {
 			if (a.getAccountName().equals(accountFrom)){
-				debitAccount = true;
+				canDebitAccount = true;
 				if (!a.deductBalance(amount)){
 					return false;
 				}
 			}
 			if (a.getAccountName().equals(accountTo)){
-				creditAccount = true;
+				canCreditAccount = true;
 				a.addBalance(amount);
 			}
 		}
 
-		if (debitAccount && creditAccount) {
+		if (canDebitAccount && canCreditAccount) {
 			return true;
 		}
 		return false;

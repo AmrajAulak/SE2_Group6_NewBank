@@ -19,6 +19,14 @@ public class NewBankClientHandler extends Thread {
 		out = new PrintWriter(s.getOutputStream(), true);
 	}
 
+//	public synchronized void waitBlock(String userInput){
+//		userInput = in.readLine();
+//		while( userInput.equals(null)){
+//			try {wait(100);
+//			} catch (Exception e) {}
+//		}}
+	//							waitBlock(accountType);
+
 	public synchronized void customerActions(NewBank bank, BufferedReader in, PrintWriter out, CustomerID customer) {
 		try {
 			out.println("What do you want to do? \n Available commands: SHOWMYACCOUNTS, ADDACCOUNT, MOVE");
@@ -34,19 +42,14 @@ public class NewBankClientHandler extends Thread {
 						break;
 					}
 					case "ADDACCOUNT": {
-						// while loop so that customer can try again on incorrect formatting
 						while (true) {
 							String accountType;
 							String depositAmount;
 							out.println("Please choose account type from: MAIN, SAVINGS, or CHECKING, or enter 'BACK' to return to menu");
-							// add BACK command
-							// reads account type response
 							accountType = in.readLine();
 							while (accountType.equals(null)) {
-								try {
-									wait(100);
-								} catch (Exception e) {
-								}
+								try {wait(100);
+								} catch (Exception e) {}
 							}
 							if (accountType.equals("BACK")) {
 								customerActions(bank, in, out, customer);
@@ -55,10 +58,8 @@ public class NewBankClientHandler extends Thread {
 							// reads deposit amount response
 							depositAmount = in.readLine();
 							while (depositAmount.equals(null)) {
-								try {
-									wait(100);
-								} catch (Exception e) {
-								}
+								try {wait(100);
+								} catch (Exception e) {}
 							}
 							if (depositAmount.equals("BACK")) {
 								customerActions(bank, in, out, customer);
@@ -83,10 +84,8 @@ public class NewBankClientHandler extends Thread {
 						// Add a BACK command
 						accountFrom = in.readLine();
 						while (accountFrom.equals(null)) {
-							try {
-								wait(100);
-							} catch (Exception e) {
-							}
+							try {wait(100);
+							} catch (Exception e) {}
 						}
 						if (accountFrom.equals("BACK")) {
 							customerActions(bank, in, out, customer);
@@ -95,10 +94,8 @@ public class NewBankClientHandler extends Thread {
 							// Add a return to menu command
 							accountTo = in.readLine();
 							while (accountTo.equals(null)) {
-								try {
-									wait(100);
-								} catch (Exception e) {
-								}
+								try {wait(100);
+								} catch (Exception e) {}
 							}
 							if (accountTo.equals("BACK")) {
 								customerActions(bank, in, out, customer);
@@ -107,8 +104,7 @@ public class NewBankClientHandler extends Thread {
 								out.println("Please enter the amount to transfer, or enter 'BACK' to return to menu");
 								amount = in.readLine();
 								while (amount.equals(null)) {
-									try {
-										wait(100);
+									try {wait(100);
 									} catch (Exception e) {
 									}
 								}
@@ -214,11 +210,5 @@ public class NewBankClientHandler extends Thread {
 
 	}
 
-//	while( s.equals(null)){
-//			try {
-//			wait(100);
-//			} catch (Exception e) {}
-//			}
-//			if (!s.equals("login" || !s.equals("register"))) {
-//			run();
-//			} else {
+
+
