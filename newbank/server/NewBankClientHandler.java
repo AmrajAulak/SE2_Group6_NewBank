@@ -116,6 +116,11 @@ public class NewBankClientHandler extends Thread{
 											out.println(response);
 											break;
 										}
+										case "SEETXNS":{
+											response = bank.seeTransactions(customer);
+											out.println(response);
+											break;
+										}
 									}
 
 									// Allows customer to type in another request

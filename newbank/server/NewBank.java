@@ -9,6 +9,7 @@ public class NewBank {
 	private HashMap<String,Customer> customers;
 	private HashMap<String,String> passwords;
     private List<String> menuList = new ArrayList<>();
+	private ArrayList <Transaction> bankLedger;
 	
 	private NewBank() {
 		customers = new HashMap<>();
@@ -84,6 +85,7 @@ public class NewBank {
                 "ADDACCOUNT",
                 "MOVEFUNDS",
 				"SENDFUNDS",
+				"SEETXNS",
                 "LOGOUT"
                 );
         return menuList;
@@ -134,4 +136,19 @@ public class NewBank {
 			return "Failure - Unable to withdraw funds";
 			}
 	}
-}
+
+	public String seeTransactions(CustomerID customer){
+
+		String transactionList="";
+		String header ="Created Date \t Transaction Type \t Amount";
+		transactionList+=header;
+
+		for (int i=0;i<bankLedger.size();i++) {
+			if(bankLedger.get(i).getCustomer()==customer) {
+				transactionList+=bankLedger.get(i).getString();
+			}
+		}
+		return transactionList;
+		}
+	}
+

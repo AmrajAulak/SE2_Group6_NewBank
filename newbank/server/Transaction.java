@@ -26,4 +26,11 @@ public class Transaction {
         this.transactionType=type;
     }
 
+    public CustomerID getCustomer() {
+        return CustomerID;
+    }
+
+    public String getString() {
+        return createdDate+" \t "+transactionType+" \t "+amount+" \n";
+    }
 }
