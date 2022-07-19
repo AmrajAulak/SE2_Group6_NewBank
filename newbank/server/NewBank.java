@@ -77,6 +77,8 @@ public class NewBank {
 
 	// checks whether customer has any accounts and returns them as a string
 
+	// hello there
+
     public List<String> showMenu(){
         Collections.addAll(menuList,
                 "SHOWMYACCOUNTS",
