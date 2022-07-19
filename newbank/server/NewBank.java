@@ -15,7 +15,7 @@ public class NewBank {
 		customers = new HashMap<>();
 		passwords = new HashMap<>();
 		addTestData();
-		ArrayList <Transaction> bankLedger = new ArrayList<Transaction>();
+		bankLedger = new ArrayList<>();
 	}
 	
 	private void addTestData() {
@@ -157,13 +157,11 @@ public class NewBank {
 
 	public String seeTransactions(CustomerID customer){
 
-		String transactionList="";
-		String header ="Created Date \t Transaction Type \t Amount";
-		transactionList+=header;
+		String transactionList="Created Date \t Transaction Type \t Amount";
 
-		for (int i=0;i<bankLedger.size();i++) {
-			if(bankLedger.get(i).getCustomer()==customer) {
-				transactionList+=bankLedger.get(i).getString();
+		for (Transaction i : bankLedger) {
+			if(i.getCustomer()==customer) {
+				transactionList = transactionList.concat(i.getString());
 			}
 		}
 		return transactionList;
