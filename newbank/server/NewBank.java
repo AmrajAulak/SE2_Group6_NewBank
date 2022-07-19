@@ -104,7 +104,7 @@ public class NewBank {
 		Customer currentCustomer = customers.get(customer.getKey());
 		currentCustomer.addAccount(new Account(accountType, Double.parseDouble(depositAmount)));
 
-		Transaction transaction = new Transaction(Double.parseDouble(depositAmount), customer, "DEPOSIT", accountType );
+		Transaction transaction = new Transaction(Double.parseDouble(depositAmount), currentCustomer, "DEPOSIT", accountType );
 		bankLedger.add(transaction);
 
 		return currentCustomer.accountsToString();
@@ -114,8 +114,8 @@ public class NewBank {
 		Customer currentCustomer = customers.get(customer.getKey());
 		if (currentCustomer.moveFunds(accountFrom, accountTo, Double.parseDouble(amount))) {
 
-			Transaction receiveTransaction = new Transaction(Double.parseDouble(amount), customer, "MOVE", accountTo );
-			Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount), customer, "MOVE", accountFrom );
+			Transaction receiveTransaction = new Transaction(Double.parseDouble(amount), currentCustomer, "MOVE", accountTo );
+			Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount), currentCustomer, "MOVE", accountFrom );
 
 			bankLedger.add(receiveTransaction);
 			bankLedger.add(sendTransaction);
@@ -139,8 +139,8 @@ public class NewBank {
 		if (senderAccount.deductBalance(value)) {
 			if (receiverAccount.addBalance(value)) {
 
-				Transaction receiveTransaction = new Transaction(Double.parseDouble(amount),senderID,"RECEIVE FROM "+senderID.getKey(),receiverCustomer.getAccounts().get(0).getAccountName());
-				Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount),senderID,"SEND TO "+receiverName,senderCustomer.getAccounts().get(0).getAccountName() );
+				Transaction receiveTransaction = new Transaction(Double.parseDouble(amount),receiverCustomer,"RECEIVE FROM "+senderID.getKey(),receiverCustomer.getAccounts().get(0).getAccountName());
+				Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount),senderCustomer,"SEND TO "+receiverName,senderCustomer.getAccounts().get(0).getAccountName() );
 
 				bankLedger.add(receiveTransaction);
 				bankLedger.add(sendTransaction);
@@ -155,9 +155,10 @@ public class NewBank {
 			}
 	}
 
-	public String seeTransactions(CustomerID customer){
+	public String seeTransactions(CustomerID customerID){
 
-		String transactionList="Created Date \t Transaction Type \t Amount";
+		Customer customer = customers.get(customerID.getKey());
+		String transactionList="Created Date \t \t \t Transaction Type \t \t \t Amount \n";
 
 		for (Transaction i : bankLedger) {
 			if(i.getCustomer()==customer) {

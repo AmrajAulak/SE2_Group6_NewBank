@@ -9,11 +9,11 @@ public class Transaction {
     private String createdDate;
     private String transactionID;
     private double amount;
-    private CustomerID CustomerID;
+    private Customer customer;
     private String transactionType;
     private String account;
 
-    public Transaction(double amount, CustomerID customerID, String type, String account){
+    public Transaction(double amount, Customer customer, String type, String account){
 
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
@@ -23,16 +23,16 @@ public class Transaction {
         this.transactionID = "TXN"+Math.round(rand.nextFloat()*1e6);
 
         this.amount = amount;
-        this.CustomerID=customerID;
+        this.customer=customer;
         this.transactionType=type;
         this.account=account;
     }
 
-    public CustomerID getCustomer() {
-        return CustomerID;
+    public Customer getCustomer() {
+        return customer;
     }
 
     public String getString() {
-        return createdDate+" \t "+transactionType+" \t "+amount+" \n";
+        return createdDate+" \t \t \t "+transactionType+" \t \t \t "+amount+" \n";
     }
 }
