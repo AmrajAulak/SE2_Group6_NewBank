@@ -9,6 +9,8 @@ public class NewBank {
 	private HashMap<String,Customer> customers;
 	private HashMap<String,String> passwords;
     private List<String> menuList = new ArrayList<>();
+	ArrayList <Loan> loansList = new ArrayList<>();
+
 	
 	private NewBank() {
 		customers = new HashMap<>();
@@ -86,7 +88,8 @@ public class NewBank {
                 "ADDACCOUNT",
                 "MOVEFUNDS",
 				"SENDFUNDS",
-                "LOGOUT"
+                "LOGOUT",
+				"REQUESTLOAN"
                 );
         return menuList;
     }
@@ -136,4 +139,27 @@ public class NewBank {
 			return "Failure - Unable to withdraw funds";
 			}
 	}
+
+	// checks that customer exists and then makes a new loan request and adds to arraylist of loans
+	public String LoanRequest(CustomerID senderId, String receiverName, String amount) {
+		if (customers.containsKey(receiverName)) {
+			Loan loan = new Loan(senderId.getKey(), receiverName);
+			loan.requestLoan(senderId.getKey(), receiverName, amount);
+			loansList.add(loan);
+			return "Loan request successful, awaiting approval...";
+		} else {
+			return "Customer not found";
+		}
+	}
+
+	// iterates loan array and if the customer has any loan requests returns the status
+	public String checkIncomingLoanStatus (CustomerID customer) {
+		for (Loan loan:loansList) {
+			if (loan.getRecieverName().equals(customer.getKey())){
+				return loan.checkLoanRequestStatus(customer.getKey());
+			}
+		}
+		return "No messages";
+	}
 }
+
