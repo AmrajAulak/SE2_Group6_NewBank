@@ -17,6 +17,14 @@ public class NewBank {
 		passwords = new HashMap<>();
 		addTestData();
 		ArrayList <Transaction> bankLedger = new ArrayList<Transaction>();
+		Collections.addAll(menuList,
+				"1 SHOWMYACCOUNTS",
+				"2 ADDACCOUNT",
+				"3 MOVEFUNDS",
+				"4 SENDFUNDS",
+				"5 REQUESTLOAN",
+				"6 LOGOUT"
+		);
 	}
 	
 	private void addTestData() {
@@ -64,33 +72,8 @@ public class NewBank {
 		return null;
 	}
 
-
-	// commands from the NewBank customer are processed in this method
-	// commented out for the time being as not using
-//	public synchronized String processRequest(CustomerID customer, String request) {
-//		if(customers.containsKey(customer.getKey())) {
-//			switch(request) {
-//			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
-//			default : return "FAIL";
-//			}
-//		}
-//		return "FAIL";
-//	}
-
-	// checks whether customer has any accounts and returns them as a string
-
-	// hello there
-
     public List<String> showMenu(){
-        Collections.addAll(menuList,
-                "SHOWMYACCOUNTS",
-                "MAKEAPAYMENT",
-                "ADDACCOUNT",
-                "MOVEFUNDS",
-				"SENDFUNDS",
-                "LOGOUT",
-				"REQUESTLOAN"
-                );
+
         return menuList;
     }
 
