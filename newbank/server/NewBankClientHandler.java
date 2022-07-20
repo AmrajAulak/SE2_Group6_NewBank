@@ -57,6 +57,7 @@ public class NewBankClientHandler extends Thread{
 								}
 
 								while (true) {
+									out.println(bank.checkIncomingLoanStatus(customer));
 									String request = in.readLine();
 									System.out.println("Request from " + customer.getKey());
 									String response;
@@ -116,8 +117,19 @@ public class NewBankClientHandler extends Thread{
 											out.println(response);
 											break;
 										}
+
 										case "SEETXNS":{
 											response = bank.seeTransactions(customer);
+
+										case "REQUESTLOAN":{
+
+											String recieverName;
+											String amountRequested;
+											out.println("Please input the name of the customer you would like to request a loan from");
+											recieverName = in.readLine();
+											out.println("Please input the amount you would like to request");
+											amountRequested = in.readLine();
+											response = bank.LoanRequest(customer, recieverName, amountRequested);
 											out.println(response);
 											break;
 										}
