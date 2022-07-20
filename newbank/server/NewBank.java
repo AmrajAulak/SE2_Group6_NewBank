@@ -1,6 +1,5 @@
 package newbank.server;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -10,19 +9,25 @@ public class NewBank {
 	private HashMap<String,Customer> customers;
 	private HashMap<String,String> passwords;
     private List<String> menuList = new ArrayList<>();
+	ArrayList <Loan> loansList = new ArrayList<>();
 
-	
 	private NewBank() {
 		customers = new HashMap<>();
 		passwords = new HashMap<>();
 		addTestData();
+		ArrayList <Transaction> bankLedger = new ArrayList<Transaction>();
+
 		Collections.addAll(menuList,
 				"SHOWMYACCOUNTS",
 				"MAKEAPAYMENT",
 				"ADDACCOUNT",
 				"MOVEFUNDS",
-				"LOGOUT"
+				"SENDFUNDS",
+				"REQUESTLOAN",
+				"SEETXNS"
+				"LOGOUT",
 		);
+
 	}
 	
 	private void addTestData() {
@@ -114,4 +119,49 @@ public class NewBank {
 			return "FAIL";
 		}
 	}
+
+	public String send(CustomerID senderID, String receiverName, String amount){
+
+		Customer receiverCustomer = customers.get(receiverName);
+		Customer senderCustomer = customers.get(senderID.getKey());
+
+		Account receiverAccount= receiverCustomer.getAccounts().get(0);
+		Account senderAccount= senderCustomer.getAccounts().get(0);
+
+		double value=Double.parseDouble(amount);
+
+		if (senderAccount.deductBalance(value)) {
+			if (receiverAccount.addBalance(value)) {
+				return "Success! "+amount+" sent to "+receiverName;
+			} else {
+				return "Failure - Unable to transmit funds";
+			}
+		}
+		else {
+			return "Failure - Unable to withdraw funds";
+			}
+	}
+
+	// checks that customer exists and then makes a new loan request and adds to arraylist of loans
+	public String LoanRequest(CustomerID senderId, String receiverName, String amount) {
+		if (customers.containsKey(receiverName)) {
+			Loan loan = new Loan(senderId.getKey(), receiverName);
+			loan.requestLoan(senderId.getKey(), receiverName, amount);
+			loansList.add(loan);
+			return "Loan request successful, awaiting approval...";
+		} else {
+			return "Customer not found";
+		}
+	}
+
+	// iterates loan array and if the customer has any loan requests returns the status
+	public String checkIncomingLoanStatus (CustomerID customer) {
+		for (Loan loan:loansList) {
+			if (loan.getRecieverName().equals(customer.getKey())){
+				return loan.checkLoanRequestStatus(customer.getKey());
+			}
+		}
+		return "No messages";
+	}
 }
+

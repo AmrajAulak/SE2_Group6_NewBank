@@ -22,6 +22,10 @@ public class Customer {
 		accounts.add(account);		
 	}
 
+	public ArrayList<Account> getAccounts() {
+		return accounts;
+	}
+
 	public boolean moveFunds(String accountFrom, String accountTo, double amount){
 		boolean debitAccount = false;
 		boolean creditAccount = false;
