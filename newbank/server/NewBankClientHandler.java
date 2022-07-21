@@ -134,6 +134,7 @@ public class NewBankClientHandler extends Thread{
 										case '6':{ //SEETXNS
 
 											response = bank.seeTransactions(customer);
+											out.println(response);
                       						break;
 										}
 									}
