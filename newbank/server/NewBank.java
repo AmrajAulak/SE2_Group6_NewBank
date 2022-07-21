@@ -24,7 +24,7 @@ public class NewBank {
 				"3 MOVEFUNDS",
 				"4 SENDFUNDS",
 				"5 REQUESTLOAN",
-				"6 SEETXNS".
+				"6 SEETXNS",
 				"7 LOGOUT"
 		);
 
@@ -154,7 +154,6 @@ public class NewBank {
 			}
 		}
 		return transactionList;
-		}
 	}
 
 	// checks that customer exists and then makes a new loan request and adds to arraylist of loans
