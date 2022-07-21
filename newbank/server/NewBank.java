@@ -24,7 +24,7 @@ public class NewBank {
 				"3 MOVEFUNDS",
 				"4 SENDFUNDS",
 				"5 REQUESTLOAN",
-				"6 SEETXNS".
+				"6 SEETXNS",
 				"7 LOGOUT"
 		);
 
