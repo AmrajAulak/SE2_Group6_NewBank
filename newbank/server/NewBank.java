@@ -1,5 +1,6 @@
 package newbank.server;
 
+import java.io.*;
 import java.util.*;
 
 
@@ -48,6 +49,40 @@ public class NewBank {
 
 	}
 
+	private void writeCustomerDataToFile(Customer customer){
+		// Could generalise using Object method input field a then setting file to "Bank_" a.getClass().toString()+".txt";
+		try {
+			FileOutputStream outputFile = new FileOutputStream("BankCustomers.txt");
+			ObjectOutputStream outputObject = new ObjectOutputStream(outputFile);
+			outputObject.writeObject(customer);
+			outputObject.close();
+			outputFile.close();
+		}
+		catch (Exception e) {
+			System.out.println("Output Exception found:" + e);
+		}
+		readCustomerDataFromFile();
+	}
+
+	private void readCustomerDataFromFile(){
+
+		try {
+			FileInputStream inputFile = new FileInputStream("BankCustomers.txt");
+			ObjectInputStream inputObject = new ObjectInputStream(inputFile);
+
+			// Read objects
+			Customer customer = (Customer) inputObject.readObject();
+
+			System.out.println(customer.toString());
+
+			inputObject.close();
+			inputFile.close();
+		}
+		catch(Exception e){
+			System.out.println("Input Exception found:" + e);
+		}
+
+	}
 	public String registerNewCustomer(String userName, String password) {
 
 		if (password.length() < 4){
@@ -57,6 +92,7 @@ public class NewBank {
 		} else {
 			customers.put(userName, new Customer());
 			passwords.put(userName, password);
+			writeCustomerDataToFile(customers.get(userName));
 			return "registered";
 		}
 	}
