@@ -1,5 +1,9 @@
 package newbank.server;
 
+import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -9,7 +13,12 @@ public class NewBank {
 	private HashMap<String,Customer> customers;
 	private HashMap<String,String> passwords;
     private List<String> menuList = new ArrayList<>();
+	private String customerName = new String();
+	private File cstmerFile = new File("customers.txt");
+	private File pswrdFile = new File("passwords.txt");
 	private ArrayList <Transaction> bankLedger;
+
+	ArrayList<Account> accountsList = new ArrayList<>();
 	ArrayList <Loan> loansList = new ArrayList<>();
 	
 	private NewBank() {
@@ -31,43 +40,96 @@ public class NewBank {
 	}
 	
 	private void addTestData() {
-		Customer bhagy = new Customer();
-		bhagy.addAccount(new Account("Main", 1000.0));
-		customers.put("Bhagy", bhagy);
-		passwords.put("Bhagy", "123");
-		
-		Customer christina = new Customer();
-		christina.addAccount(new Account("Savings", 1500.0));
-		customers.put("Christina", christina);
-		passwords.put("Christina", "456");
+//		try (BufferedReader bf = new BufferedReader(new FileReader(cstmerFile))) {
+//			String line;
+//			while ((line = bf.readLine()) != null) {
+//				String[] keyValue = line.split(":");
+//				customerName = keyValue[0];
+//				Customer customerName = new Customer();
+//				ArrayList<Account> accountsList = new ArrayList<Account>(ArrayList.asList(keyValue[1]));
+//				customerName.addAccounts(accountsList);
+//				customers.put(keyValue[0], customerName);
+//			}
+//
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 
-		Customer john = new Customer();
-		john.addAccount(new Account("Checking", 250.0));
-		customers.put("John", john);
-		passwords.put("John", "789");
+
+		try (BufferedReader bf = new BufferedReader(new FileReader(pswrdFile))) {
+			String line;
+			while ((line = bf.readLine()) != null) {
+				String[] keyValue = line.split(":");
+				System.out.println(Arrays.toString(keyValue));
+				passwords.put(keyValue[0], keyValue[1]);
+//				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+//		Customer bhagy = new Customer();
+//		bhagy.addAccount(new Account("Main", 1000.0));
+//		customers.put("Bhagy", bhagy);
+//		passwords.put("Bhagy", "123");
+//
+//		Customer christina = new Customer();
+//		christina.addAccount(new Account("Savings", 1500.0));
+//		customers.put("Christina", christina);
+//		passwords.put("Christina", "456");
+//
+//		Customer john = new Customer();
+//		john.addAccount(new Account("Checking", 250.0));
+//		customers.put("John", john);
+//		passwords.put("John", "789");
 
 	}
 
 	public String registerNewCustomer(String userName, String password) {
-
-		if (password.length() < 4){
+		if (password.length() < 4) {
 			return "passwordError";
-		} else if (customers.containsKey(userName)){
+		}
+		else if (customers.containsKey(userName)) {
 			return "userNameError";
-		} else {
+		}
+		else {
 			customers.put(userName, new Customer());
 			passwords.put(userName, password);
+
+//			try (BufferedWriter bf = new BufferedWriter(new FileWriter(cstmerFile))) {
+//				for (Map.Entry<String, String> entry :
+//						customers.entrySet()) {
+//					bf.write(entry.getKey() + ":"
+//							+ entry.getValue());
+//					bf.newLine();
+//				}
+//				bf.flush();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+
+			try (BufferedWriter bf = new BufferedWriter(new FileWriter(pswrdFile))) {
+				for (Map.Entry<String, String> entry :
+						passwords.entrySet()) {
+					bf.write(entry.getKey() + ":"
+							+ entry.getValue());
+					bf.newLine();
+				}
+				bf.flush();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			return "registered";
 		}
 	}
-	
+
 	public static NewBank getBank() {
 		return bank;
 	}
-	
-	public synchronized CustomerID checkLogInDetails(String userName, String password) {
 
-		if(customers.containsKey(userName)) {
+	public synchronized CustomerID checkLogInDetails(String userName, String password) {
+		if(passwords.containsKey(userName)) {
 			if(passwords.get(userName).equals(password)) {
 				return new CustomerID(userName);
 			}
