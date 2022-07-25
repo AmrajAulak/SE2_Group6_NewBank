@@ -62,13 +62,13 @@ public class NewBankClientHandler extends Thread{
 									System.out.println("Request from " + customer.getKey());
 									String response;
 
-									switch(request) {
-										case "SHOWMYACCOUNTS" : {
+									switch(request.charAt(0)) {
+										case '1': {	// SHOWMYACCOUNTS
 											// prints customers accounts
 											out.println(bank.showMyAccounts(customer));
 											break;
 										}
-										case "ADDACCOUNT" : {
+										case '2': {	//ADDACCOUNT
 											// while loop so that customer can try again on incorrect formatting
 											while (true) {
 												String accountType;
@@ -92,7 +92,7 @@ public class NewBankClientHandler extends Thread{
 											}
 											break;
 										}
-										case "MOVEFUNDS":{
+										case '3': {	//MOVEFUNDS
 											String accountFrom = "";
 											String accountTo = "";
 											String amount;
@@ -106,7 +106,7 @@ public class NewBankClientHandler extends Thread{
 											out.println(response);
 											break;
 										}
-										case "SENDFUNDS":{
+										case '4': {	//SENDFUNDS
 											String customerTo = "";
 											String amount;
 											out.println("Please choose the customer Name to send funds to from your Main Account:");
@@ -117,11 +117,11 @@ public class NewBankClientHandler extends Thread{
 											out.println(response);
 											break;
 										}
-										case "REQUESTLOAN":{
+
+										case '5': { //REQUESTLOAN
 
 											String recieverName;
 											String amountRequested;
-
 											out.println("Please input the name of the customer you would like to request a loan from");
 											recieverName = in.readLine();
 											out.println("Please input the amount you would like to request");
@@ -129,6 +129,13 @@ public class NewBankClientHandler extends Thread{
 											response = bank.LoanRequest(customer, recieverName, amountRequested);
 											out.println(response);
 											break;
+										}
+                    
+										case '6':{ //SEETXNS
+
+											response = bank.seeTransactions(customer);
+											out.println(response);
+                      						break;
 										}
 									}
 

@@ -9,23 +9,23 @@ public class NewBank {
 	private HashMap<String,Customer> customers;
 	private HashMap<String,String> passwords;
     private List<String> menuList = new ArrayList<>();
+	private ArrayList <Transaction> bankLedger;
 	ArrayList <Loan> loansList = new ArrayList<>();
-
+	
 	private NewBank() {
 		customers = new HashMap<>();
 		passwords = new HashMap<>();
 		addTestData();
-		ArrayList <Transaction> bankLedger = new ArrayList<Transaction>();
-
+    bankLedger = new ArrayList<>();
+		
 		Collections.addAll(menuList,
-				"SHOWMYACCOUNTS",
-				"MAKEAPAYMENT",
-				"ADDACCOUNT",
-				"MOVEFUNDS",
-				"SENDFUNDS",
-				"REQUESTLOAN",
-				"SEETXNS"
-				"LOGOUT",
+				"1 SHOWMYACCOUNTS",
+				"2 ADDACCOUNT",
+				"3 MOVEFUNDS",
+				"4 SENDFUNDS",
+				"5 REQUESTLOAN",
+				"6 SEETXNS",
+				"7 LOGOUT"
 		);
 
 	}
@@ -75,23 +75,6 @@ public class NewBank {
 		return null;
 	}
 
-
-	// commands from the NewBank customer are processed in this method
-	// commented out for the time being as not using
-//	public synchronized String processRequest(CustomerID customer, String request) {
-//		if(customers.containsKey(customer.getKey())) {
-//			switch(request) {
-//			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
-//			default : return "FAIL";
-//			}
-//		}
-//		return "FAIL";
-//	}
-
-	// checks whether customer has any accounts and returns them as a string
-
-	// hello there
-
     public List<String> showMenu(){
         return menuList;
     }
@@ -108,12 +91,23 @@ public class NewBank {
 	public String addAccount(CustomerID customer, String accountType, String depositAmount) {
 		Customer currentCustomer = customers.get(customer.getKey());
 		currentCustomer.addAccount(new Account(accountType, Double.parseDouble(depositAmount)));
+
+		Transaction transaction = new Transaction(Double.parseDouble(depositAmount), currentCustomer, "DEPOSIT", accountType );
+		bankLedger.add(transaction);
+
 		return currentCustomer.accountsToString();
 	}
 
 	public String move(CustomerID customer,String accountFrom, String accountTo, String amount){
 		Customer currentCustomer = customers.get(customer.getKey());
 		if (currentCustomer.moveFunds(accountFrom, accountTo, Double.parseDouble(amount))) {
+
+			Transaction receiveTransaction = new Transaction(Double.parseDouble(amount), currentCustomer, "MOVE", accountTo );
+			Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount), currentCustomer, "MOVE", accountFrom );
+
+			bankLedger.add(receiveTransaction);
+			bankLedger.add(sendTransaction);
+
 			return "SUCCESS";
 		} else {
 			return "FAIL";
@@ -132,6 +126,13 @@ public class NewBank {
 
 		if (senderAccount.deductBalance(value)) {
 			if (receiverAccount.addBalance(value)) {
+
+				Transaction receiveTransaction = new Transaction(Double.parseDouble(amount),receiverCustomer,"RECEIVE FROM "+senderID.getKey(),receiverCustomer.getAccounts().get(0).getAccountName());
+				Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount),senderCustomer,"SEND TO "+receiverName,senderCustomer.getAccounts().get(0).getAccountName() );
+
+				bankLedger.add(receiveTransaction);
+				bankLedger.add(sendTransaction);
+
 				return "Success! "+amount+" sent to "+receiverName;
 			} else {
 				return "Failure - Unable to transmit funds";
@@ -140,6 +141,19 @@ public class NewBank {
 		else {
 			return "Failure - Unable to withdraw funds";
 			}
+	}
+
+	public String seeTransactions(CustomerID customerID){
+
+		Customer customer = customers.get(customerID.getKey());
+		String transactionList="Created Date \t \t \t Transaction Type \t \t \t Amount \n";
+
+		for (Transaction i : bankLedger) {
+			if(i.getCustomer()==customer) {
+				transactionList = transactionList.concat(i.getString());
+			}
+		}
+		return transactionList;
 	}
 
 	// checks that customer exists and then makes a new loan request and adds to arraylist of loans
