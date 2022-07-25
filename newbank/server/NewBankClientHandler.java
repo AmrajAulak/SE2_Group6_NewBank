@@ -137,6 +137,9 @@ public class NewBankClientHandler extends Thread{
 											out.println(response);
                       						break;
 										}
+										case '7' :{ //LOGOUT
+											run();
+										}
 									}
 
 									// Allows customer to type in another request
