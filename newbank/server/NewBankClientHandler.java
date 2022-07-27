@@ -50,6 +50,21 @@ public class NewBankClientHandler extends Thread{
 								break;
 							}
 						case "login":
+							// checks if the user has any messages, waits for response before continuing
+							if (!bank.checkIncomingLoanStatus(customer).equals("No messages")) {
+								out.println(bank.checkIncomingLoanStatus(customer));
+								out.println("Do you wish to ACCEPT or REJECT any of these loan requests? (YES/NO)");
+								String response = in.readLine();
+
+								if (response.equals("YES")) {
+									out.println("Please input the number of the loan you would like to response to");
+									String number = in.readLine();
+									out.println("Please input ACCEPT or REJECT");
+									String selection = in.readLine();
+									out.println(bank.updateLoanStatus(customer, number, selection));
+								}
+							}
+
 							if (customer != null) {
 								out.println("Log In Successful. What do you want to do?");
 								for(String element: bank.showMenu()){
@@ -57,7 +72,7 @@ public class NewBankClientHandler extends Thread{
 								}
 
 								while (true) {
-									out.println(bank.checkIncomingLoanStatus(customer));
+
 									String request = in.readLine();
 									System.out.println("Request from " + customer.getKey());
 									String response;

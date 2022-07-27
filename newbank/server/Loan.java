@@ -1,36 +1,45 @@
 package newbank.server;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Loan {
 
-    private final ArrayList<LoanRequest> loanRequestList;
+    private final HashMap<Integer, LoanRequest> loanRequestList;
     private String senderId;
     private String recieverName;
+    private int key;
 
     Loan(String senderId, String recieverName) {
-        this.loanRequestList = new ArrayList <>();
+        this.loanRequestList = new HashMap();
         this.senderId = senderId;
         this.recieverName = recieverName;
+        this.key = 0;
     }
 
     public void requestLoan(String senderId, String recieverName, String amount) {
         LoanRequest newRequest = new LoanRequest(senderId, recieverName, amount);
-        loanRequestList.add(newRequest);
+        loanRequestList.put(key, newRequest);
+        key++;
     }
 
     public String getSenderId(){return this.senderId;}
+
+    public LoanRequest getLoanRequest(int number) {
+        return loanRequestList.get(number);
+    }
 
     public String getRecieverName(){return this.recieverName;}
 
     public String checkLoanRequestStatus(String customerId) {
 
-        for (LoanRequest request : loanRequestList) {
-            if (request.getRequestedCustomer().equals(customerId)) {
-                return request.getLoanRequestStatus();
-            }
+        String str = "";
+
+        for (HashMap.Entry<Integer, LoanRequest> entry :  loanRequestList.entrySet()) {
+            str += entry.getKey() + ": " + entry.getValue().getLoanRequestStatus() + "\n";
         }
-        return "No messages";
+        return str;
+
     }
 
 }

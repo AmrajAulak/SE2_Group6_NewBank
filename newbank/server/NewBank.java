@@ -177,5 +177,19 @@ public class NewBank {
 		}
 		return "No messages";
 	}
+
+	// takes in loan number (used as a key) and selection (ACCEPT/REJECT) and updates that loan request
+	// then returns the status of the current loan to be displayed in the console
+	public String updateLoanStatus(CustomerID customer, String loanNumber, String response) {
+		for (Loan loan: loansList) {
+			if (loan.getRecieverName().equals(customer.getKey())){
+				loan.getLoanRequest(Integer.parseInt(loanNumber)).updateLoanStatus(response);
+				return loan.getLoanRequest(Integer.parseInt(loanNumber)).getLoanRequestStatus();
+			}
+		}
+
+		return "No status information";
+	}
+
 }
 
