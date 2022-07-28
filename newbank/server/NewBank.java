@@ -19,13 +19,14 @@ public class NewBank {
     bankLedger = new ArrayList<>();
 		
 		Collections.addAll(menuList,
-				"1 SHOWMYACCOUNTS",
-				"2 ADDACCOUNT",
-				"3 MOVEFUNDS",
-				"4 SENDFUNDS",
-				"5 REQUESTLOAN",
-				"6 SEETXNS",
-				"7 LOGOUT"
+				"1 SHOW MY ACCOUNTS",
+				"2 ADD ACCOUNT",
+				"3 MOVE FUNDS",
+				"4 SEND FUNDS",
+				"5 REQUEST LOAN",
+				"6 SEE TRANSACTIONS",
+				"7 LOG-OUT",
+				"8 CHANGE PASSWORD"
 		);
 
 	}
@@ -58,6 +59,18 @@ public class NewBank {
 			customers.put(userName, new Customer());
 			passwords.put(userName, password);
 			return "registered";
+		}
+	}
+
+	public String passwordReset(String userName, String oldPassword, String newPassword) {
+
+		if(!oldPassword.equals( passwords.get(userName))){
+			return "incorrect password";
+		} else if (newPassword.length() < 8){
+			return "passwordError";
+		} else {
+			passwords.put(userName, newPassword);
+			return "You successfully changed your password";
 		}
 	}
 	
