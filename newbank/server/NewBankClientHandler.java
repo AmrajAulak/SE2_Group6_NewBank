@@ -162,7 +162,14 @@ public class NewBankClientHandler extends Thread{
 												} else if (responseStr.equals("incorrect password")) {
 													out.println("Error: you failed to correctly enter your existing password");
 													break;
-												} else {
+
+												} else if (responseStr.equals("numError")) {
+													out.println("Error: your password needs to contain at least one number character");
+													break;
+												 	} else if (responseStr.equals("capsError")) {
+												out.println("Error: your password needs to contain at least one capitalised letter");
+												break;
+											}else {
 													out.println(responseStr);
 													break;
 												}
