@@ -7,10 +7,11 @@ public class Account {
 
 	private double balance;
 	private long accountNumber;
+	private double overdraftLimit;
 
 	public Account(String accountName, double openingBalance) {
 		this.accountName = accountName.toUpperCase();
-
+		this.overdraftLimit = 500;
 		this.balance = openingBalance;
 		Random rand = new Random();
 		this.accountNumber = Math.round(rand.nextFloat()*1e6);
@@ -24,7 +25,7 @@ public class Account {
 		return accountName;
 	}
 
-	public Boolean deductBalance(double amount){
+	public Boolean deductAmount(double amount){
 		if ((balance-amount) > 0) {
 			balance = balance - amount;
 			return true;
@@ -33,7 +34,17 @@ public class Account {
 		}
 	}
 
-	public Boolean addBalance (double amount){
+	public Boolean payAmount(double amount){
+		if(accountName.equals("MAIN")) {
+			if ((balance - amount) > overdraftLimit) {
+				balance = balance - amount;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Boolean addAmount (double amount){
 		balance = balance + amount;
 		return true;
 	}

@@ -65,21 +65,6 @@ public class NewBank {
 	}
 
 
-	// commands from the NewBank customer are processed in this method
-	// commented out for the time being as not using
-//	public synchronized String processRequest(CustomerID customer, String request) {
-//		if(customers.containsKey(customer.getKey())) {
-//			switch(request) {
-//			case "SHOWMYACCOUNTS" : return showMyAccounts(customer);
-//			default : return "FAIL";
-//			}
-//		}
-//		return "FAIL";
-//	}
-
-	// checks whether customer has any accounts and returns them as a string
-
-	// hello there
 
     public List<String> showMenu(){
         Collections.addAll(menuList,
@@ -128,8 +113,8 @@ public class NewBank {
 
 		double value=Double.parseDouble(amount);
 
-		if (senderAccount.deductBalance(value)) {
-			if (receiverAccount.addBalance(value)) {
+		if (senderAccount.payAmount(value)) {
+			if (receiverAccount.addAmount(value)) {
 				return "Success! "+amount+" sent to "+receiverName;
 			} else {
 				return "Failure - Unable to transmit funds";
