@@ -1,5 +1,6 @@
 package newbank.server;
 
+import java.io.*;
 import java.util.*;
 
 
@@ -50,16 +51,30 @@ public class NewBank {
 	}
 
 	public String registerNewCustomer(String userName, String password) {
-
-		if (password.length() < 4){
+		if (password.length() < 4) {
 			return "passwordError";
-		} else if (customers.containsKey(userName)){
-			return "userNameError";
-		} else {
-			customers.put(userName, new Customer());
-			passwords.put(userName, password);
-			return "registered";
 		}
+
+		Properties p = new Properties();
+		try {
+			p.load(new FileReader("userStore.properties"));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if(p.containsKey(userName)) {
+			return "userNameError";
+		}
+		else{
+			try {
+				p.setProperty(userName, password);
+				p.store(new FileWriter("userStore.properties", true), "");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return "registered";
 	}
 
 	public String passwordReset(String userName, String oldPassword, String newPassword) {
@@ -79,12 +94,27 @@ public class NewBank {
 	}
 	
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-
-		if(customers.containsKey(userName)) {
-			if(passwords.get(userName).equals(password)) {
-				return new CustomerID(userName);
-			}
+		Properties p = new Properties();
+		try {
+			p.load(new FileReader("userStore.properties"));
 		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if(password.equals(p.getProperty(userName))) {
+			Customer currentUser = new Customer();
+			currentUser.addAccount(new Account("Savings", 1500.0));
+			customers.put(userName, currentUser);
+			passwords.put(userName, password);
+			return new CustomerID(userName);
+		}
+
+//		if(customers.containsKey(userName)) {
+//			if(passwords.get(userName).equals(password)) {
+//				return new CustomerID(userName);
+//			}
+//		}
 		return null;
 	}
 
