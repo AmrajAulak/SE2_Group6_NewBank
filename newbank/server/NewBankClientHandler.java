@@ -63,12 +63,12 @@ public class NewBankClientHandler extends Thread{
 									String response;
 
 									switch(request.charAt(0)) {
-										case '1': {	// SHOWMYACCOUNTS
+										case '1': {    // SHOWMYACCOUNTS
 											// prints customers accounts
 											out.println(bank.showMyAccounts(customer));
 											break;
 										}
-										case '2': {	//ADDACCOUNT
+										case '2': {    //ADDACCOUNT
 											// while loop so that customer can try again on incorrect formatting
 											while (true) {
 												String accountType;
@@ -92,27 +92,27 @@ public class NewBankClientHandler extends Thread{
 											}
 											break;
 										}
-										case '3': {	//MOVEFUNDS
+										case '3': {    //MOVEFUNDS
 											String accountFrom = "";
 											String accountTo = "";
 											String amount;
 											out.println("Please choose account to withdraw funds");
-											accountFrom= in.readLine();
+											accountFrom = in.readLine();
 											out.println("Please choose account to deposit funds");
-											accountTo= in.readLine();
+											accountTo = in.readLine();
 											out.println("Please enter the amount to transfer");
-											amount= in.readLine();
+											amount = in.readLine();
 											response = bank.move(customer, accountFrom, accountTo, amount);
 											out.println(response);
 											break;
 										}
-										case '4': {	//SENDFUNDS
+										case '4': {    //SENDFUNDS
 											String customerTo = "";
 											String amount;
 											out.println("Please choose the customer Name to send funds to from your Main Account:");
-											customerTo= in.readLine();
+											customerTo = in.readLine();
 											out.println("Please enter the amount to transfer");
-											amount= in.readLine();
+											amount = in.readLine();
 											response = bank.send(customer, customerTo, amount);
 											out.println(response);
 											break;
@@ -130,15 +130,43 @@ public class NewBankClientHandler extends Thread{
 											out.println(response);
 											break;
 										}
-                    
-										case '6':{ //SEETXNS
+
+										case '6': { //SEETXNS
 
 											response = bank.seeTransactions(customer);
 											out.println(response);
-                      						break;
+											break;
 										}
-										case '7' :{ //LOGOUT
+										case '7': { //LOGOUT
 											run();
+										}
+
+										case '8': {// CHANGE PASSWORD
+											out.println("please confirm by entering your old password ");
+											String oldPassword = in.readLine();
+											// ask for user name
+											out.println("Please enter your new password (it must be at least 8 characters long)");
+											String newPassword = in.readLine();
+											// ask for password
+											out.println("Please confirm your new password by re-entering");
+											String passwordCheck = in.readLine();
+											if(!passwordCheck.equals(newPassword)) {
+												out.println("Your password entries did not match");
+												break;
+											}else {
+												out.println("Checking Details...");
+												String responseStr = bank.passwordReset(userName, oldPassword, newPassword);
+												if (responseStr.equals("passwordError")) {
+													out.println("Error: your password needs to be at least 8 characters long");
+													break;
+												} else if (responseStr.equals("incorrect password")) {
+													out.println("Error: you failed to correctly enter your existing password");
+													break;
+												} else {
+													out.println(responseStr);
+													break;
+												}
+											}
 										}
 									}
 

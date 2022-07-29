@@ -1,8 +1,5 @@
 package newbank.server;
 
-import java.io.*;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
 
@@ -12,30 +9,26 @@ public class NewBank {
 	private HashMap<String,Customer> customers;
 	private HashMap<String,String> passwords;
     private List<String> menuList = new ArrayList<>();
-
-	private String customerName = new String();
-	private ArrayList<Account> accounts;
 	private ArrayList <Transaction> bankLedger;
-
-	ArrayList<Account> accountsList = new ArrayList<>();
 	ArrayList <Loan> loansList = new ArrayList<>();
 	
 	private NewBank() {
 		customers = new HashMap<>();
 		passwords = new HashMap<>();
 		addTestData();
-    	bankLedger = new ArrayList<>();
-		accounts = new ArrayList<>();
-
+    bankLedger = new ArrayList<>();
+		
 		Collections.addAll(menuList,
-				"1 SHOWMYACCOUNTS",
-				"2 ADDACCOUNT",
-				"3 MOVEFUNDS",
-				"4 SENDFUNDS",
-				"5 REQUESTLOAN",
-				"6 SEETXNS",
-				"7 LOGOUT"
+				"1 SHOW MY ACCOUNTS",
+				"2 ADD ACCOUNT",
+				"3 MOVE FUNDS",
+				"4 SEND FUNDS",
+				"5 REQUEST LOAN",
+				"6 SEE TRANSACTIONS",
+				"7 LOG-OUT",
+				"8 CHANGE PASSWORD"
 		);
+
 	}
 	
 	private void addTestData() {
@@ -43,7 +36,7 @@ public class NewBank {
 		bhagy.addAccount(new Account("Main", 1000.0));
 		customers.put("Bhagy", bhagy);
 		passwords.put("Bhagy", "123");
-
+		
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
 		customers.put("Christina", christina);
@@ -53,73 +46,45 @@ public class NewBank {
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);
 		passwords.put("John", "789");
+
 	}
 
 	public String registerNewCustomer(String userName, String password) {
-		if (password.length() < 4) {
-			return "passwordError";
-		}
-		try (BufferedReader bf = new BufferedReader(new FileReader("customers.csv"))) {
-			String line;
-			while ((line = bf.readLine()) != null) {
-				String[] keyValue = line.split(",");
-				String storedCustomer = keyValue[0];
-				if (storedCustomer.contains(userName)) {
-					return "userNameError";
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		Properties p = new Properties();
-		try {
-			p.load(new FileReader("myfile.properties"));
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
 
-		if(p.containsKey(userName)) {
+		if (password.length() < 4){
+			return "passwordError";
+		} else if (customers.containsKey(userName)){
 			return "userNameError";
+		} else {
+			customers.put(userName, new Customer());
+			passwords.put(userName, password);
+			return "registered";
 		}
-		else{
-			try {
-				p.setProperty(userName, password);
-				p.store(new FileWriter("myfile.properties", true), "");
-			} catch (IOException e) {
-				//			// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return "registered";
 	}
 
+	public String passwordReset(String userName, String oldPassword, String newPassword) {
+
+		if(!oldPassword.equals( passwords.get(userName))){
+			return "incorrect password";
+		} else if (newPassword.length() < 8){
+			return "passwordError";
+		} else {
+			passwords.put(userName, newPassword);
+			return "You successfully changed your password";
+		}
+	}
+	
 	public static NewBank getBank() {
 		return bank;
 	}
-
+	
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		Properties p = new Properties();
-		try {
-			p.load(new FileReader("myfile.properties"));
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
 
-		if(password.equals(p.getProperty(userName))) {
-			Customer currentUser = new Customer();
-			currentUser.addAccount(new Account("Savings", 1500.0));
-			customers.put(userName, currentUser);
-			passwords.put(userName, password);
-			return new CustomerID(userName);
+		if(customers.containsKey(userName)) {
+			if(passwords.get(userName).equals(password)) {
+				return new CustomerID(userName);
+			}
 		}
-
-//		if(customers.containsKey(userName)) {
-//			if(passwords.get(userName).equals(password)) {
-//				return new CustomerID(userName);
-//			}
-//		}
 		return null;
 	}
 
