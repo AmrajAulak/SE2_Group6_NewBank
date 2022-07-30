@@ -1,6 +1,8 @@
 package newbank.server;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class NewBank {
@@ -52,11 +54,22 @@ public class NewBank {
 
 	public String registerNewCustomer(String userName, String password) {
 
+		Pattern numberCheck = Pattern.compile("[0-9]");
+		Pattern capsCheck = Pattern.compile("[A-Z]");
+		Matcher numMatch = numberCheck.matcher(password);
+		Matcher capsMatch = capsCheck.matcher(password);
+		boolean numFound = numMatch.find();
+		boolean capsFound = capsMatch.find();
+
 		if (password.length() < 4){
 			return "passwordError";
 		} else if (customers.containsKey(userName)){
 			return "userNameError";
-		} else {
+		}else if (!numFound){
+			return "numError";
+		}else if (!capsFound){
+			return "capsError";
+		}  else {
 			customers.put(userName, new Customer());
 			passwords.put(userName, password);
 			return "registered";
@@ -65,10 +78,22 @@ public class NewBank {
 
 	public String passwordReset(String userName, String oldPassword, String newPassword) {
 
+		Pattern numberCheck = Pattern.compile("[0-9]");
+		Pattern capsCheck = Pattern.compile("[A-Z]");
+		Matcher numMatch = numberCheck.matcher(newPassword);
+		Matcher capsMatch = capsCheck.matcher(newPassword);
+		boolean numFound = numMatch.find();
+		boolean capsFound = capsMatch.find();
+
+
 		if(!oldPassword.equals( passwords.get(userName))){
 			return "incorrect password";
-		} else if (newPassword.length() < 8){
+		} else if (newPassword.length() < 8) {
 			return "passwordError";
+		}else if (!numFound){
+			return "numError";
+		}else if (!capsFound){
+			return "capsError";
 		} else {
 			passwords.put(userName, newPassword);
 			return "You successfully changed your password";
