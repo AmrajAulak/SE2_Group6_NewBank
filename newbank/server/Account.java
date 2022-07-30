@@ -36,7 +36,7 @@ public class Account {
 
 	public Boolean payAmount(double amount){
 		if(accountName.equals("MAIN")) {
-			if ((balance - amount) > overdraftLimit) {
+			if ((balance - amount) > overdraftLimit*-1) {
 				balance = balance - amount;
 				return true;
 			}
