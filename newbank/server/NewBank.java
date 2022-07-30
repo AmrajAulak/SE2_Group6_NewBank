@@ -33,7 +33,7 @@ public class NewBank {
 	
 	private void addTestData() {
 		Customer bhagy = new Customer();
-		bhagy.addAccount(new Account("Main", 1000.0));
+		bhagy.addAccount(new Account("Main", 100.0));
 		customers.put("Bhagy", bhagy);
 		passwords.put("Bhagy", "123");
 		
@@ -43,6 +43,7 @@ public class NewBank {
 		passwords.put("Christina", "456");
 
 		Customer john = new Customer();
+		john.addAccount(new Account("Main", 100.0));
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);
 		passwords.put("John", "789");
@@ -137,8 +138,8 @@ public class NewBank {
 
 		double value=Double.parseDouble(amount);
 
-		if (senderAccount.deductBalance(value)) {
-			if (receiverAccount.addBalance(value)) {
+		if (senderAccount.payAmount(value)) {
+			if (receiverAccount.addAmount(value)) {
 
 				Transaction receiveTransaction = new Transaction(Double.parseDouble(amount),receiverCustomer,"RECEIVE FROM "+senderID.getKey(),receiverCustomer.getAccounts().get(0).getAccountName());
 				Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount),senderCustomer,"SEND TO "+receiverName,senderCustomer.getAccounts().get(0).getAccountName() );
