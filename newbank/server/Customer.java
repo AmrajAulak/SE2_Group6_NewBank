@@ -37,13 +37,13 @@ public class Customer {
 		for(Account a : accounts) {
 			if (a.getAccountName().equals(accountFrom)){
 				debitAccount = true;
-				if (!a.deductBalance(amount)){
+				if (!a.deductAmount(amount)){
 					return false;
 				}
 			}
 			if (a.getAccountName().equals(accountTo)){
 				creditAccount = true;
-				a.addBalance(amount);
+				a.addAmount(amount);
 			}
 		}
 

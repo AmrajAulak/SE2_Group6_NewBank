@@ -1,7 +1,8 @@
 package newbank.server;
 
-import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class NewBank {
@@ -34,7 +35,7 @@ public class NewBank {
 	
 	private void addTestData() {
 		Customer bhagy = new Customer();
-		bhagy.addAccount(new Account("Main", 1000.0));
+		bhagy.addAccount(new Account("Main", 100.0));
 		customers.put("Bhagy", bhagy);
 		passwords.put("Bhagy", "123");
 		
@@ -44,6 +45,7 @@ public class NewBank {
 		passwords.put("Christina", "456");
 
 		Customer john = new Customer();
+		john.addAccount(new Account("Main", 100.0));
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);
 		passwords.put("John", "789");
@@ -51,38 +53,47 @@ public class NewBank {
 	}
 
 	public String registerNewCustomer(String userName, String password) {
-		if (password.length() < 4) {
+
+		Pattern numberCheck = Pattern.compile("[0-9]");
+		Pattern capsCheck = Pattern.compile("[A-Z]");
+		Matcher numMatch = numberCheck.matcher(password);
+		Matcher capsMatch = capsCheck.matcher(password);
+		boolean numFound = numMatch.find();
+		boolean capsFound = capsMatch.find();
+
+		if (password.length() < 4){
 			return "passwordError";
-		}
-
-		Properties p = new Properties();
-		try {
-			p.load(new FileReader("userStore.properties"));
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		if(p.containsKey(userName)) {
+		} else if (customers.containsKey(userName)){
 			return "userNameError";
+		}else if (!numFound){
+			return "numError";
+		}else if (!capsFound){
+			return "capsError";
+		}  else {
+			customers.put(userName, new Customer());
+			passwords.put(userName, password);
+			return "registered";
 		}
-		else{
-			try {
-				p.setProperty(userName, password);
-				p.store(new FileWriter("userStore.properties", true), "");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return "registered";
 	}
 
 	public String passwordReset(String userName, String oldPassword, String newPassword) {
 
+		Pattern numberCheck = Pattern.compile("[0-9]");
+		Pattern capsCheck = Pattern.compile("[A-Z]");
+		Matcher numMatch = numberCheck.matcher(newPassword);
+		Matcher capsMatch = capsCheck.matcher(newPassword);
+		boolean numFound = numMatch.find();
+		boolean capsFound = capsMatch.find();
+
+
 		if(!oldPassword.equals( passwords.get(userName))){
 			return "incorrect password";
-		} else if (newPassword.length() < 8){
+		} else if (newPassword.length() < 8) {
 			return "passwordError";
+		}else if (!numFound){
+			return "numError";
+		}else if (!capsFound){
+			return "capsError";
 		} else {
 			passwords.put(userName, newPassword);
 			return "You successfully changed your password";
@@ -94,27 +105,12 @@ public class NewBank {
 	}
 	
 	public synchronized CustomerID checkLogInDetails(String userName, String password) {
-		Properties p = new Properties();
-		try {
-			p.load(new FileReader("userStore.properties"));
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
 
-		if(password.equals(p.getProperty(userName))) {
-			Customer currentUser = new Customer();
-			currentUser.addAccount(new Account("Savings", 1500.0));
-			customers.put(userName, currentUser);
-			passwords.put(userName, password);
-			return new CustomerID(userName);
+		if(customers.containsKey(userName)) {
+			if(passwords.get(userName).equals(password)) {
+				return new CustomerID(userName);
+			}
 		}
-
-//		if(customers.containsKey(userName)) {
-//			if(passwords.get(userName).equals(password)) {
-//				return new CustomerID(userName);
-//			}
-//		}
 		return null;
 	}
 
@@ -167,8 +163,8 @@ public class NewBank {
 
 		double value=Double.parseDouble(amount);
 
-		if (senderAccount.deductBalance(value)) {
-			if (receiverAccount.addBalance(value)) {
+		if (senderAccount.payAmount(value)) {
+			if (receiverAccount.addAmount(value)) {
 
 				Transaction receiveTransaction = new Transaction(Double.parseDouble(amount),receiverCustomer,"RECEIVE FROM "+senderID.getKey(),receiverCustomer.getAccounts().get(0).getAccountName());
 				Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount),senderCustomer,"SEND TO "+receiverName,senderCustomer.getAccounts().get(0).getAccountName() );
