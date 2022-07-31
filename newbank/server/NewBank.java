@@ -86,8 +86,9 @@ public class NewBank {
 //			customers.put(userName, new Customer());
 //			passwords.put(userName, password);
 			try {
-				p.setProperty(userName, password);
-				p.store(new FileWriter("userStore.properties", true), "");
+				Properties p2 = new Properties();
+				p2.setProperty(userName, password);
+				p2.store(new FileWriter("userStore.properties", true), "");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
