@@ -11,6 +11,7 @@ public class LoanRequest {
         this.senderId = senderId;
         this.recieverName = recieverName;
         this.amount = amount;
+        this.status = "awaitingApproval";
     }
 
     public String getRequestedCustomer() {
@@ -18,7 +19,15 @@ public class LoanRequest {
     }
 
     public String getLoanRequestStatus() {
-        return this.senderId + " has requested a loan for " + this.amount;
+        return this.senderId + " has requested a loan for " + this.amount + " and loan status is currently: " + this.status;
+    }
+
+    public void updateLoanStatus(String response) {
+        if (response.equals("ACCEPT")) {
+            this.status = "approved";
+        } else {
+            this.status = "denied";
+        }
     }
 
 }
