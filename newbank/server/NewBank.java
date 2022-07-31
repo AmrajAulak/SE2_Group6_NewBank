@@ -1,5 +1,8 @@
 package newbank.server;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,19 +64,36 @@ public class NewBank {
 		boolean numFound = numMatch.find();
 		boolean capsFound = capsMatch.find();
 
+		Properties p = new Properties();
+		try {
+			p.load(new FileReader("userStore.properties"));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		if (password.length() < 4){
 			return "passwordError";
-		} else if (customers.containsKey(userName)){
+//		} else if (customers.containsKey(userName)){
+//			return "userNameError";
+		} else if (p.containsKey(userName)){
 			return "userNameError";
 		}else if (!numFound){
 			return "numError";
 		}else if (!capsFound){
 			return "capsError";
 		}  else {
-			customers.put(userName, new Customer());
-			passwords.put(userName, password);
-			return "registered";
+//			customers.put(userName, new Customer());
+//			passwords.put(userName, password);
+			try {
+				Properties p2 = new Properties();
+				p2.setProperty(userName, password);
+				p2.store(new FileWriter("userStore.properties", true), "");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		return "registered";
 	}
 
 	public String passwordReset(String userName, String oldPassword, String newPassword) {
@@ -85,8 +105,17 @@ public class NewBank {
 		boolean numFound = numMatch.find();
 		boolean capsFound = capsMatch.find();
 
+		Properties p = new Properties();
+		try {
+			p.load(new FileReader("userStore.properties"));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 
-		if(!oldPassword.equals( passwords.get(userName))){
+//		if(!oldPassword.equals( passwords.get(userName))){
+//			return "incorrect password";
+		if(!oldPassword.equals(p.getProperty(userName))){
 			return "incorrect password";
 		} else if (newPassword.length() < 8) {
 			return "passwordError";
@@ -95,6 +124,12 @@ public class NewBank {
 		}else if (!capsFound){
 			return "capsError";
 		} else {
+			try {
+				p.setProperty(userName, newPassword);
+				p.store(new FileWriter("userStore.properties"), "");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			passwords.put(userName, newPassword);
 			return "You successfully changed your password";
 		}
@@ -103,14 +138,29 @@ public class NewBank {
 	public static NewBank getBank() {
 		return bank;
 	}
-	
-	public synchronized CustomerID checkLogInDetails(String userName, String password) {
 
-		if(customers.containsKey(userName)) {
-			if(passwords.get(userName).equals(password)) {
-				return new CustomerID(userName);
-			}
+	public synchronized CustomerID checkLogInDetails(String userName, String password) {
+		Properties p = new Properties();
+		try {
+			p.load(new FileReader("userStore.properties"));
 		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if(password.equals(p.getProperty(userName))) {
+			Customer currentUser = new Customer();
+			currentUser.addAccount(new Account("Savings", 1500.0));
+			customers.put(userName, currentUser);
+			passwords.put(userName, password);
+			return new CustomerID(userName);
+		}
+
+//		if(customers.containsKey(userName)) {
+//			if(passwords.get(userName).equals(password)) {
+//				return new CustomerID(userName);
+//			}
+//		}
 		return null;
 	}
 
