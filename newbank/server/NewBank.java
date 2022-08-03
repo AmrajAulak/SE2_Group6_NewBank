@@ -21,7 +21,7 @@ public class NewBank {
 		customers = new HashMap<>();
 		passwords = new HashMap<>();
 		addTestData();
-    bankLedger = new ArrayList<>();
+    	bankLedger = new ArrayList<>();
 		
 		Collections.addAll(menuList,
 				"1 SHOW MY ACCOUNTS",
@@ -44,6 +44,7 @@ public class NewBank {
 		
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
+		christina.addAccount(new Account("Main", 100.0));
 		customers.put("Christina", christina);
 		passwords.put("Christina", "456");
 
@@ -74,8 +75,6 @@ public class NewBank {
 
 		if (password.length() < 4){
 			return "passwordError";
-//		} else if (customers.containsKey(userName)){
-//			return "userNameError";
 		} else if (p.containsKey(userName)){
 			return "userNameError";
 		}else if (!numFound){
@@ -83,8 +82,6 @@ public class NewBank {
 		}else if (!capsFound){
 			return "capsError";
 		}  else {
-//			customers.put(userName, new Customer());
-//			passwords.put(userName, password);
 			try {
 				Properties p2 = new Properties();
 				p2.setProperty(userName, password);
@@ -113,8 +110,6 @@ public class NewBank {
 			e.printStackTrace();
 		}
 
-//		if(!oldPassword.equals( passwords.get(userName))){
-//			return "incorrect password";
 		if(!oldPassword.equals(p.getProperty(userName))){
 			return "incorrect password";
 		} else if (newPassword.length() < 8) {
@@ -149,18 +144,13 @@ public class NewBank {
 		}
 
 		if(password.equals(p.getProperty(userName))) {
-			Customer currentUser = new Customer();
-			currentUser.addAccount(new Account("Savings", 1500.0));
-			customers.put(userName, currentUser);
-			passwords.put(userName, password);
+//			Customer currentUser = new Customer();
+//			currentUser.addAccount(new Account("Main", 1500.0));
+//			customers.put(userName, currentUser);
+//			passwords.put(userName, password);
 			return new CustomerID(userName);
 		}
 
-//		if(customers.containsKey(userName)) {
-//			if(passwords.get(userName).equals(password)) {
-//				return new CustomerID(userName);
-//			}
-//		}
 		return null;
 	}
 
@@ -203,26 +193,26 @@ public class NewBank {
 		}
 	}
 
-	public String send(CustomerID senderID, String receiverName, String amount){
+	public String send(CustomerID senderID, CustomerID receiverID, String amount){
 
-		Customer receiverCustomer = customers.get(receiverName);
-		Customer senderCustomer = customers.get(senderID.getKey());
+		Customer receiver = customers.get(receiverID.getKey());
+		Customer sender = customers.get(senderID.getKey());
 
-		Account receiverAccount= receiverCustomer.getAccounts().get(0);
-		Account senderAccount= senderCustomer.getAccounts().get(0);
+		Account receiverAccount= receiver.getCurrentAccount();
+		Account senderAccount= sender.getCurrentAccount();
 
 		double value=Double.parseDouble(amount);
 
 		if (senderAccount.payAmount(value)) {
 			if (receiverAccount.addAmount(value)) {
 
-				Transaction receiveTransaction = new Transaction(Double.parseDouble(amount),receiverCustomer,"RECEIVE FROM "+senderID.getKey(),receiverCustomer.getAccounts().get(0).getAccountName());
-				Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount),senderCustomer,"SEND TO "+receiverName,senderCustomer.getAccounts().get(0).getAccountName() );
+				Transaction receiveTransaction = new Transaction(Double.parseDouble(amount),receiver,"RECEIVE FROM "+senderID.getKey(),receiver.getCurrentAccount().getAccountName());
+				Transaction sendTransaction = new Transaction(-1*Double.parseDouble(amount),sender,"SEND TO "+receiverID.getKey(),sender.getCurrentAccount().getAccountName());
 
 				bankLedger.add(receiveTransaction);
 				bankLedger.add(sendTransaction);
 
-				return "Success! "+amount+" sent to "+receiverName;
+				return "Success! "+amount+" sent to "+receiverID.getKey();
 			} else {
 				return "Failure - Unable to transmit funds";
 			}

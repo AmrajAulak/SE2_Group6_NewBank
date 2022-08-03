@@ -30,6 +30,15 @@ public class Customer {
 		return accounts;
 	}
 
+	public Account getCurrentAccount(){
+		for(Account a : accounts) {
+			if (a.getAccountName().equals("MAIN")) {
+				return a;
+			}
+		}
+		return null;
+	}
+
 	public boolean moveFunds(String accountFrom, String accountTo, double amount){
 		boolean debitAccount = false;
 		boolean creditAccount = false;
