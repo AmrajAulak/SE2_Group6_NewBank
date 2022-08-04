@@ -134,7 +134,8 @@ public class NewBankClientHandler extends Thread{
 											customerTo = in.readLine();
 											out.println("Please enter the amount to transfer");
 											amount = in.readLine();
-											response = bank.send(customer, customerTo, amount);
+											CustomerID payee = new CustomerID(customerTo);
+											response = bank.send(customer, payee, amount);
 											out.println(response);
 											break;
 										}
