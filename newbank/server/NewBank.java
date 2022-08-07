@@ -1,8 +1,6 @@
 package newbank.server;
 
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,6 +11,7 @@ public class NewBank {
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
 	private HashMap<String,String> passwords;
+	private HashMap<String,Account> accounts;
     private List<String> menuList = new ArrayList<>();
 	private ArrayList <Transaction> bankLedger;
 	ArrayList <Loan> loansList = new ArrayList<>();
@@ -20,6 +19,39 @@ public class NewBank {
 	private NewBank() {
 		customers = new HashMap<>();
 		passwords = new HashMap<>();
+		accounts = new HashMap<>();
+
+
+		Properties p = new Properties();
+		try {
+			p.load(new FileReader("userStore.properties"));
+			Object[] keys = p.keySet().toArray();
+			for(Object key: keys){
+				customers.put(key.toString(), new Customer());
+				passwords.put(key.toString(), p.getProperty(key.toString()));
+			};
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		Properties p2 = new Properties();
+		try {
+			p2.load(new FileReader("accountsStore.properties"));
+			if(!p2.isEmpty()) {
+				Object[] keys = p2.keySet().toArray();
+				for (Object key : keys) {
+					String[] account = p2.getProperty(key.toString()).split(":");
+					String accountType = account[0].trim().replace("/\\/g","");
+					String accountAmount = account[1].trim();
+					accounts.put(key.toString(), new Account(accountType, Double.parseDouble(accountAmount)));
+				}
+			}
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		addTestData();
     	bankLedger = new ArrayList<>();
 		
@@ -35,24 +67,24 @@ public class NewBank {
 		);
 
 	}
-	
+
 	private void addTestData() {
 		Customer bhagy = new Customer();
 		bhagy.addAccount(new Account("Main", 100.0));
 		customers.put("Bhagy", bhagy);
-		passwords.put("Bhagy", "123");
+		passwords.put("Bhagy", "1234A5678");
 		
 		Customer christina = new Customer();
 		christina.addAccount(new Account("Savings", 1500.0));
 		christina.addAccount(new Account("Main", 100.0));
 		customers.put("Christina", christina);
-		passwords.put("Christina", "456");
+		passwords.put("Christina", "1234B5678");
 
 		Customer john = new Customer();
 		john.addAccount(new Account("Main", 100.0));
 		john.addAccount(new Account("Checking", 250.0));
 		customers.put("John", john);
-		passwords.put("John", "789");
+		passwords.put("John", "1234C5678");
 
 	}
 
@@ -128,6 +160,7 @@ public class NewBank {
 			passwords.put(userName, newPassword);
 			return "You successfully changed your password";
 		}
+
 	}
 	
 	public static NewBank getBank() {
@@ -144,13 +177,8 @@ public class NewBank {
 		}
 
 		if(password.equals(p.getProperty(userName))) {
-//			Customer currentUser = new Customer();
-//			currentUser.addAccount(new Account("Main", 1500.0));
-//			customers.put(userName, currentUser);
-//			passwords.put(userName, password);
 			return new CustomerID(userName);
 		}
-
 		return null;
 	}
 
@@ -170,6 +198,15 @@ public class NewBank {
 	public String addAccount(CustomerID customer, String accountType, String depositAmount) {
 		Customer currentCustomer = customers.get(customer.getKey());
 		currentCustomer.addAccount(new Account(accountType, Double.parseDouble(depositAmount)));
+
+		Properties p = new Properties();
+		try {
+			p.load(new FileReader("accountsStore.properties"));
+			p.setProperty(customer.getKey(), accountType + ":" + depositAmount);
+			p.store(new FileWriter("accountsStore.properties"), "");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		Transaction transaction = new Transaction(Double.parseDouble(depositAmount), currentCustomer, "DEPOSIT", accountType );
 		bankLedger.add(transaction);
