@@ -105,8 +105,6 @@ public class NewBankClientHandler extends Thread{
 									System.out.println("Request from " + customer.getKey());
 									String response;
 
-
-
 									switch(String.valueOf(request)) {
 										case "1": {    // SHOWMYACCOUNTS
 											// prints customers accounts
@@ -209,8 +207,10 @@ public class NewBankClientHandler extends Thread{
 													out.println("That is not a valid transfer amount");
 												}
 											}
-
 											CustomerID payee = new CustomerID(customerTo);
+//											response = bank.showMyAccounts(payee);
+//											out.println(response);
+
 											response = bank.send(customer, payee, amount);
 											out.println(response);
 											break;

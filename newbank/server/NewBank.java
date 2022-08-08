@@ -11,7 +11,6 @@ public class NewBank {
 	private static final NewBank bank = new NewBank();
 	private HashMap<String,Customer> customers;
 	private HashMap<String,String> passwords;
-	private HashMap<String,Account> accounts;
     private List<String> menuList = new ArrayList<>();
 	private ArrayList <Transaction> bankLedger;
 	ArrayList <Loan> loansList = new ArrayList<>();
@@ -19,34 +18,18 @@ public class NewBank {
 	private NewBank() {
 		customers = new HashMap<>();
 		passwords = new HashMap<>();
-		accounts = new HashMap<>();
-
 
 		Properties p = new Properties();
 		try {
 			p.load(new FileReader("userStore.properties"));
 			Object[] keys = p.keySet().toArray();
 			for(Object key: keys){
-				customers.put(key.toString(), new Customer());
+				Customer user = new Customer();
+				user.addAccount(new Account("Main", 0));
+				customers.put(key.toString(), user);
+//				customers.put(key.toString(), new Customer());
 				passwords.put(key.toString(), p.getProperty(key.toString()));
 			};
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		Properties p2 = new Properties();
-		try {
-			p2.load(new FileReader("accountsStore.properties"));
-			if(!p2.isEmpty()) {
-				Object[] keys = p2.keySet().toArray();
-				for (Object key : keys) {
-					String[] account = p2.getProperty(key.toString()).split(":");
-					String accountType = account[0].trim().replace("/\\/g","");
-					String accountAmount = account[1].trim();
-					accounts.put(key.toString(), new Account(accountType, Double.parseDouble(accountAmount)));
-				}
-			}
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -118,6 +101,9 @@ public class NewBank {
 				Properties p2 = new Properties();
 				p2.setProperty(userName, password);
 				p2.store(new FileWriter("userStore.properties", true), "");
+				Customer newUser = new Customer();
+				newUser.addAccount(new Account("Main", 0));
+				customers.put(userName, newUser);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -177,7 +163,7 @@ public class NewBank {
 		}
 
 		if(password.equals(p.getProperty(userName))) {
-			return new CustomerID(userName);
+				return new CustomerID(userName);
 		}
 		return null;
 	}
@@ -187,6 +173,7 @@ public class NewBank {
     }
 
 	public String showMyAccounts(CustomerID customer) {
+//		Customer currentCustomer = customers.get(customer.getKey());
 		if (customers.get(customer.getKey()).accountsToString().isEmpty()) {
 			return "No accounts listed";
 		} else {
@@ -199,14 +186,15 @@ public class NewBank {
 		Customer currentCustomer = customers.get(customer.getKey());
 		currentCustomer.addAccount(new Account(accountType, Double.parseDouble(depositAmount)));
 
-		Properties p = new Properties();
-		try {
-			p.load(new FileReader("accountsStore.properties"));
-			p.setProperty(customer.getKey(), accountType + ":" + depositAmount);
-			p.store(new FileWriter("accountsStore.properties"), "");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		accounts.put(customer.getKey(), currentCustomer.getAccounts());
+//		Properties p = new Properties();
+//		try {
+//			p.load(new FileReader("accountsStore.properties"));
+//			p.setProperty(customer.getKey(), accountType + ":" + depositAmount);
+//			p.store(new FileWriter("accountsStore.properties"), "");
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 
 		Transaction transaction = new Transaction(Double.parseDouble(depositAmount), currentCustomer, "DEPOSIT", accountType );
 		bankLedger.add(transaction);
