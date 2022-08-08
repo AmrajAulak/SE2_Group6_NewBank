@@ -1,18 +1,20 @@
 package newbank.server;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
+import java.util.*;
 
 public class NewBankClientHandler extends Thread{
 	
 	private NewBank bank;
 	private BufferedReader in;
 	private PrintWriter out;
+	private ArrayList<String> AccountList = new ArrayList<>(Arrays.asList(
+			"MAIN", "SAVINGS", "CHECKING"
+	));
 
+	private Properties customersFile = new Properties();
+	private boolean validInput;
 	
 	public NewBankClientHandler(Socket s) throws IOException {
 		bank = NewBank.getBank();
@@ -79,91 +81,181 @@ public class NewBankClientHandler extends Thread{
 								}
 
 								while (true) {
-									String request = in.readLine();
+									validInput = true;
+									int request = 0;
+									try {
+										customersFile.load(new FileReader("userStore.properties"));
+									}
+									catch (IOException e) {
+										e.printStackTrace();
+									}
+
+									try {
+										request  = Integer.parseInt(in.readLine());
+										if (request < 1 || request > 8){
+											validInput = false;
+											out.println("That is not an option. Try again.");
+//											break; // this will escape the while loop
+										}
+									} catch (Exception e) {
+										validInput = false;
+										out.println("That is not an option. Try again.");
+									}
+//
 									System.out.println("Request from " + customer.getKey());
 									String response;
 
-									switch(request.charAt(0)) {
-										case '1': {    // SHOWMYACCOUNTS
+									switch(String.valueOf(request)) {
+										case "1": {    // SHOWMYACCOUNTS
 											// prints customers accounts
 											out.println(bank.showMyAccounts(customer));
 											break;
 										}
-										case '2': {    //ADDACCOUNT
+										case "2": {    //ADDACCOUNT
 											// while loop so that customer can try again on incorrect formatting
-											while (true) {
-												String accountType;
-												String depositAmount;
-												out.println("Please choose account type from: MAIN, SAVINGS, or CHECKING");
-												// reads account type response
-												accountType = in.readLine();
-												out.println("Please choose deposit amount");
-												// reads deposit amount response
-												depositAmount = in.readLine();
+//											while (true) {
+											String accountType;
+											String depositAmount;
 
-												// checks that the input can be parsed to a double otherwise prompts customer to try again
+
+											// reads account type response
+											while(true){
+												out.println("Please choose account type from: MAIN, SAVINGS, or CHECKING");
+												accountType = in.readLine();
+												if (AccountList.contains(accountType)){
+													break;
+												}
+												out.println("Not a valid account");
+											}
+
+											// reads deposit amount response
+											while(true){
+												out.println("Please enter deposit amount");
+												depositAmount = in.readLine();
 												try {
 													Double.parseDouble(depositAmount);
-													response = bank.addAccount(customer, accountType, depositAmount);
-													out.println(response);
 													break;
-												} catch (NumberFormatException e) {
-													out.println("Incorrect formatting: Please try again");
+												} catch (Exception e) {
+													out.println("That is not a valid deposit amount");
 												}
 											}
+											response = bank.addAccount(customer, accountType, depositAmount);
+											out.println(response);
 											break;
 										}
-										case '3': {    //MOVEFUNDS
+
+										case "3": {    //MOVEFUNDS
 											String accountFrom = "";
 											String accountTo = "";
 											String amount;
-											out.println("Please choose account to withdraw funds");
-											accountFrom = in.readLine();
-											out.println("Please choose account to deposit funds");
-											accountTo = in.readLine();
-											out.println("Please enter the amount to transfer");
-											amount = in.readLine();
+											while(true){
+												out.println("Please choose account to withdraw funds");
+												accountFrom = in.readLine();
+												String usersAccounts = bank.showMyAccounts(customer);
+												if (AccountList.contains(accountFrom) &&
+														usersAccounts.contains(accountFrom)){
+													break;
+												}
+												out.println("Not a valid account");
+											}
+
+											while(true){
+												out.println("Please choose account to deposit funds");
+												accountTo = in.readLine();
+												String usersAccounts = bank.showMyAccounts(customer);
+												if (AccountList.contains(accountTo) &&
+														usersAccounts.contains(accountTo)){
+													break;
+												}
+												out.println("Not a valid account");
+											}
+
+											while(true){
+												out.println("Please enter the amount to transfer");
+												amount = in.readLine();
+												try {
+													Double.parseDouble(amount);
+													break;
+												} catch (Exception e) {
+													out.println("That is not a valid transfer amount");
+												}
+											}
 											response = bank.move(customer, accountFrom, accountTo, amount);
 											out.println(response);
 											break;
 										}
-										case '4': {    //SENDFUNDS
+										case "4": {    //SENDFUNDS
 											String customerTo = "";
 											String amount;
-											out.println("Please choose the customer Name to send funds to from your Main Account:");
-											customerTo = in.readLine();
-											out.println("Please enter the amount to transfer");
-											amount = in.readLine();
+
+											while(true) {
+												out.println("Please choose the customer Name to send funds to from your Main Account:");
+												customerTo = in.readLine();
+												if(customersFile.containsKey(customerTo)){
+													break;
+												}
+												out.println("Not a registered customer, please enter again");
+											}
+
+											while(true){
+												out.println("Please enter the amount to transfer");
+												amount = in.readLine();
+												try {
+													Double.parseDouble(amount);
+													break;
+												} catch (Exception e) {
+													out.println("That is not a valid transfer amount");
+												}
+											}
 											CustomerID payee = new CustomerID(customerTo);
+//											response = bank.showMyAccounts(payee);
+//											out.println(response);
+
 											response = bank.send(customer, payee, amount);
 											out.println(response);
 											break;
 										}
 
-										case '5': { //REQUESTLOAN
+										case "5": { //REQUESTLOAN
 
 											String recieverName;
 											String amountRequested;
-											out.println("Please input the name of the customer you would like to request a loan from");
-											recieverName = in.readLine();
-											out.println("Please input the amount you would like to request");
-											amountRequested = in.readLine();
+											while(true) {
+												out.println("Please input the name of the customer you would like to request a loan from");
+												recieverName = in.readLine();
+												if(customersFile.containsKey(recieverName)){
+													break;
+												}
+												out.println("Not a registered customer, please enter again");
+											}
+
+											while(true){
+												out.println("Please input the amount you would like to request");
+												amountRequested = in.readLine();
+												try {
+													Double.parseDouble(amountRequested);
+													break;
+												} catch (Exception e) {
+													out.println("That is not a valid amount");
+												}
+											}
+
 											response = bank.LoanRequest(customer, recieverName, amountRequested);
 											out.println(response);
 											break;
 										}
 
-										case '6': { //SEETXNS
+										case "6": { //SEETXNS
 
 											response = bank.seeTransactions(customer);
 											out.println(response);
 											break;
 										}
-										case '7': { //LOGOUT
+										case "7": { //LOGOUT
 											run();
 										}
 
-										case '8': {// CHANGE PASSWORD
+										case "8": {// CHANGE PASSWORD
 											out.println("please confirm by entering your old password ");
 											String oldPassword = in.readLine();
 											// ask for user name
@@ -200,7 +292,12 @@ public class NewBankClientHandler extends Thread{
 									}
 
 									// Allows customer to type in another request
-									out.println("What would you like to do next?");
+									if(validInput) {
+										out.println("What would you like to do next?");
+									}
+									else{
+										out.println("Please type a number to choose from the following options");
+									}
 									for(String element: bank.showMenu()){
 										out.println(element);
 									}

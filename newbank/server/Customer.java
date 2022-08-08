@@ -2,9 +2,10 @@ package newbank.server;
 
 import java.util.ArrayList;
 
-public class Customer {
+public class Customer{
 	
 	private ArrayList<Account> accounts;
+	private String currentUser;
 	
 	public Customer() {
 		accounts = new ArrayList<>();
@@ -13,6 +14,10 @@ public class Customer {
 //	public void addAccounts(ArrayList<Account> accountList){
 //		accounts = accountList;
 //	}
+
+	public String getUser(){
+		return currentUser;
+	}
 	
 	public String accountsToString() {
 		String s = "";
