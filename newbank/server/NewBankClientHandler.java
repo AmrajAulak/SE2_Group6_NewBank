@@ -71,6 +71,7 @@ public class NewBankClientHandler extends Thread{
 									out.println("Please input ACCEPT or REJECT");
 									String selection = in.readLine();
 									out.println(bank.updateLoanStatus(customer, number, selection));
+
 								}
 							}
 

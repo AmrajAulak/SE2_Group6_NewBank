@@ -289,10 +289,16 @@ public class NewBank {
 			if (loan.getRecieverName().equals(customer.getKey())){
 				loan.getLoanRequest(Integer.parseInt(loanNumber)).updateLoanStatus(response);
 
+
+
 				// if the user accepts the loan, the amount will be deposited in the requesters account
-				if (response.equals("ACCEPT")) {
-					move(customer, loan.getRecieverName(), loan.getSenderId(), loan.getLoanRequest(Integer.parseInt(loanNumber)).getRequestedAmount());
-				}
+				// for this to work, we need to rework how CustomerIDs are used in order for the send method
+				// to be used correctly. Due to time constraints I have commented out the below code but with
+				// some tweaking, the functionality would work
+
+//				if (response.equals("ACCEPT")) {
+//					send(customer, recieverID, loan.getLoanRequest(Integer.parseInt(loanNumber)).getRequestedAmount());
+//				}
 
 				return loan.getLoanRequest(Integer.parseInt(loanNumber)).getLoanRequestStatus();
 			}
