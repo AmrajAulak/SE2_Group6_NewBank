@@ -288,9 +288,16 @@ public class NewBank {
 		for (Loan loan: loansList) {
 			if (loan.getRecieverName().equals(customer.getKey())){
 				loan.getLoanRequest(Integer.parseInt(loanNumber)).updateLoanStatus(response);
+
+				// if the user accepts the loan, the amount will be deposited in the requesters account
+				if (response.equals("ACCEPT")) {
+					move(customer, loan.getRecieverName(), loan.getSenderId(), loan.getLoanRequest(Integer.parseInt(loanNumber)).getRequestedAmount());
+				}
+
 				return loan.getLoanRequest(Integer.parseInt(loanNumber)).getLoanRequestStatus();
 			}
 		}
+
 
 		return "No status information";
 	}
